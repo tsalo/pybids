@@ -40,9 +40,10 @@ before_install:
 
 install:
 - pip install ".[analysis]"
+- pip install coveralls pytest-cov
 
 script:
-- py.test
+- py.test --cov-report term-missing --cov=bids
 
 after_success:
 - coveralls
