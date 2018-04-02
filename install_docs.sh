@@ -10,7 +10,7 @@ fi
 git clean -fdx
 
 git checkout master
-cd docs
+cd doc
 make clean
 make html
 TIMESTAMP=$(date)
@@ -19,7 +19,7 @@ git checkout gh-pages
 
 cp -R _build/html/* ..
 cd ..
-rm -rf docs
+rm -rf doc
 git add .
 git commit -m "pybids docs built with Sphinx on $TIMESTAMP"
 git push origin gh-pages
