@@ -1,0 +1,6 @@
+bids\.reports\.utils\.get\_slice\_info
+======================================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: get_slice_info

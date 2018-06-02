@@ -1,0 +1,15 @@
+:mod:`bids.grabbids`.BIDSLayout
+======================================
+
+.. currentmodule:: bids.grabbids
+
+.. autoclass:: BIDSLayout
+
+   
+   
+
+.. include:: bids.grabbids.BIDSLayout.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

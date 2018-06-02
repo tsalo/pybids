@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bids.variables.entities.RunInfo &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../index.html"/>
+        <link rel="up" title="bids.variables.entities" href="bids.variables.entities.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bids
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.grabbids"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>: Querying BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.analysis"><code class="docutils literal"><span class="pre">bids.analysis</span></code>: Model specification for BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.reports"><code class="docutils literal"><span class="pre">bids.reports</span></code>: Data acquisition report generation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#module-bids.variables"><code class="docutils literal"><span class="pre">bids.variables</span></code>: Variables</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.io.html">bids.variables.io</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="bids.variables.entities.html">bids.variables.entities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.entities.Node.html">bids.variables.entities.Node</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.entities.NodeIndex.html">bids.variables.entities.NodeIndex</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">bids.variables.entities.RunInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.entities.RunNode.html">bids.variables.entities.RunNode</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.kollekshuns.html">bids.variables.kollekshuns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.variables.html">bids.variables.variables</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.utils"><code class="docutils literal"><span class="pre">bids.utils</span></code>: Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bids</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="bids.variables.entities.html">bids.variables.entities</a> &raquo;</li>
+        
+      <li>bids.variables.entities.RunInfo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/bids.variables.entities.RunInfo.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bids-variables-entities-runinfo">
+<h1>bids.variables.entities.RunInfo<a class="headerlink" href="#bids-variables-entities-runinfo" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bids.variables.entities.RunInfo">
+<em class="property">class </em><code class="descname">RunInfo</code><span class="sig-paren">(</span><em>entities</em>, <em>duration</em>, <em>tr</em>, <em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.entities.RunInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.duration" title="bids.variables.entities.RunInfo.duration"><code class="xref py py-obj docutils literal"><span class="pre">duration</span></code></a></td>
+<td>Alias for field number 1</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.entities" title="bids.variables.entities.RunInfo.entities"><code class="xref py py-obj docutils literal"><span class="pre">entities</span></code></a></td>
+<td>Alias for field number 0</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.image" title="bids.variables.entities.RunInfo.image"><code class="xref py py-obj docutils literal"><span class="pre">image</span></code></a></td>
+<td>Alias for field number 3</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.tr" title="bids.variables.entities.RunInfo.tr"><code class="xref py py-obj docutils literal"><span class="pre">tr</span></code></a></td>
+<td>Alias for field number 2</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.count" title="bids.variables.entities.RunInfo.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a>(…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.index" title="bids.variables.entities.RunInfo.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a>((value,&nbsp;[start,&nbsp;…)</td>
+<td>Raises ValueError if the value is not present.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bids.variables.entities.RunInfo.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>$self</em>, <em>/</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.entities.RunInfo.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.count" title="bids.variables.entities.RunInfo.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a>(…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.entities.RunInfo.index" title="bids.variables.entities.RunInfo.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a>((value,&nbsp;[start,&nbsp;…)</td>
+<td>Raises ValueError if the value is not present.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bids.variables.entities.RunInfo.count">
+<code class="descname">count</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span> &#x2192; integer -- return number of occurrences of value<a class="headerlink" href="#bids.variables.entities.RunInfo.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bids.variables.entities.RunInfo.duration">
+<code class="descname">duration</code><a class="headerlink" href="#bids.variables.entities.RunInfo.duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bids.variables.entities.RunInfo.entities">
+<code class="descname">entities</code><a class="headerlink" href="#bids.variables.entities.RunInfo.entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bids.variables.entities.RunInfo.image">
+<code class="descname">image</code><a class="headerlink" href="#bids.variables.entities.RunInfo.image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.entities.RunInfo.index">
+<code class="descname">index</code><span class="sig-paren">(</span><em>value</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>stop</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; integer -- return first index of value.<a class="headerlink" href="#bids.variables.entities.RunInfo.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bids.variables.entities.RunInfo.tr">
+<code class="descname">tr</code><a class="headerlink" href="#bids.variables.entities.RunInfo.tr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 - 2018, Developers of pybids.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.1+87.g835a4c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

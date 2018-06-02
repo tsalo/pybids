@@ -1,0 +1,6 @@
+bids\.reports\.utils\.get\_sizestr
+==================================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: get_sizestr

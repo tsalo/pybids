@@ -1,0 +1,6 @@
+bids\.reports\.utils\.list\_to\_str
+===================================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: list_to_str

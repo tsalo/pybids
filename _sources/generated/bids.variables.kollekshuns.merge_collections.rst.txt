@@ -1,0 +1,6 @@
+bids\.variables\.kollekshuns\.merge\_collections
+================================================
+
+.. currentmodule:: bids.variables.kollekshuns
+
+.. autofunction:: merge_collections

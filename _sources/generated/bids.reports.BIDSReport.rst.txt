@@ -1,0 +1,15 @@
+:mod:`bids.reports`.BIDSReport
+=====================================
+
+.. currentmodule:: bids.reports
+
+.. autoclass:: BIDSReport
+
+   
+   
+
+.. include:: bids.reports.BIDSReport.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

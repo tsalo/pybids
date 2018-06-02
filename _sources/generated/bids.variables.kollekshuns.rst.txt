@@ -1,0 +1,31 @@
+bids.variables.kollekshuns
+==========================
+
+.. automodule:: bids.variables.kollekshuns
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      merge_collections
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      BIDSRunVariableCollection
+      BIDSVariableCollection
+   
+   
+
+   
+   
+   

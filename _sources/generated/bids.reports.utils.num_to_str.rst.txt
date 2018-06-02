@@ -1,0 +1,6 @@
+bids\.reports\.utils\.num\_to\_str
+==================================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: num_to_str

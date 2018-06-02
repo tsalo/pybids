@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Reference &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="index.html"/>
+        <link rel="prev" title="4. reports: Data acquisition report generation" href="reports/index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> bids
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-bids.grabbids"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>: Querying BIDS datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.grabbids.BIDSLayout.html"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>.BIDSLayout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.grabbids.BIDSValidator.html"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>.BIDSValidator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bids.analysis"><code class="docutils literal"><span class="pre">bids.analysis</span></code>: Model specification for BIDS datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.analysis.Analysis.html"><code class="docutils literal"><span class="pre">bids.analysis</span></code>.Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.analysis.auto_model.html"><code class="docutils literal"><span class="pre">bids.analysis</span></code>.auto_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bids.reports"><code class="docutils literal"><span class="pre">bids.reports</span></code>: Data acquisition report generation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.reports.BIDSReport.html"><code class="docutils literal"><span class="pre">bids.reports</span></code>.BIDSReport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.reports.utils.html">bids.reports.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bids.variables"><code class="docutils literal"><span class="pre">bids.variables</span></code>: Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.variables.io.html">bids.variables.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.variables.entities.html">bids.variables.entities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.variables.kollekshuns.html">bids.variables.kollekshuns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.variables.variables.html">bids.variables.variables</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bids.utils"><code class="docutils literal"><span class="pre">bids.utils</span></code>: Utility functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.utils.listify.html"><code class="docutils literal"><span class="pre">bids.utils</span></code>.listify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/bids.utils.matches_entities.html"><code class="docutils literal"><span class="pre">bids.utils</span></code>.matches_entities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="whats_new.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">bids</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-bids.grabbids">
+<span id="bids-grabbids-querying-bids-datasets"></span><span id="base-ref"></span><h2><a class="reference internal" href="#module-bids.grabbids" title="bids.grabbids"><code class="xref py py-mod docutils literal"><span class="pre">bids.grabbids</span></code></a>: Querying BIDS datasets<a class="headerlink" href="#module-bids.grabbids" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-bids.grabbids" title="bids.grabbids"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/bids.grabbids.BIDSLayout.html#bids.grabbids.BIDSLayout" title="bids.grabbids.BIDSLayout"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code></a>(path[,&nbsp;config,&nbsp;…])</td>
+<td>Layout class representing an entire BIDS project.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/bids.grabbids.BIDSValidator.html#bids.grabbids.BIDSValidator" title="bids.grabbids.BIDSValidator"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSValidator</span></code></a>([index_associated])</td>
+<td>An object for BIDS (Brain Imaging Data Structure) verification in a data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-bids.analysis">
+<span id="bids-analysis-model-specification-for-bids-datasets"></span><span id="calibration-ref"></span><h2><a class="reference internal" href="#module-bids.analysis" title="bids.analysis"><code class="xref py py-mod docutils literal"><span class="pre">bids.analysis</span></code></a>: Model specification for BIDS datasets<a class="headerlink" href="#module-bids.analysis" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-bids.analysis" title="bids.analysis"><code class="xref py py-obj docutils literal"><span class="pre">bids.analysis</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/bids.analysis.Analysis.html#bids.analysis.Analysis" title="bids.analysis.Analysis"><code class="xref py py-obj docutils literal"><span class="pre">bids.analysis.Analysis</span></code></a>(layout,&nbsp;model)</td>
+<td>Represents an entire BIDS-Model analysis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/bids.analysis.auto_model.html#bids.analysis.auto_model" title="bids.analysis.auto_model"><code class="xref py py-obj docutils literal"><span class="pre">bids.analysis.auto_model</span></code></a>(layout[,&nbsp;…])</td>
+<td>Create a simple default model for each of the tasks in a BIDSLayout.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-bids.reports">
+<span id="bids-reports-data-acquisition-report-generation"></span><span id="id1"></span><h2><a class="reference internal" href="#module-bids.reports" title="bids.reports"><code class="xref py py-mod docutils literal"><span class="pre">bids.reports</span></code></a>: Data acquisition report generation<a class="headerlink" href="#module-bids.reports" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-bids.reports" title="bids.reports"><code class="xref py py-obj docutils literal"><span class="pre">bids.reports</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/bids.reports.BIDSReport.html#bids.reports.BIDSReport" title="bids.reports.BIDSReport"><code class="xref py py-obj docutils literal"><span class="pre">bids.reports.BIDSReport</span></code></a>(layout[,&nbsp;config])</td>
+<td>Generates publication-quality data acquisition methods section from BIDS dataset.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/bids.reports.utils.html#module-bids.reports.utils" title="bids.reports.utils"><code class="xref py py-obj docutils literal"><span class="pre">bids.reports.utils</span></code></a></td>
+<td>Generate publication-quality data acquisition methods section from BIDS dataset.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-bids.variables">
+<span id="bids-variables-variables"></span><span id="id2"></span><h2><a class="reference internal" href="#module-bids.variables" title="bids.variables"><code class="xref py py-mod docutils literal"><span class="pre">bids.variables</span></code></a>: Variables<a class="headerlink" href="#module-bids.variables" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-bids.variables" title="bids.variables"><code class="xref py py-obj docutils literal"><span class="pre">bids.variables</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/bids.variables.io.html#module-bids.variables.io" title="bids.variables.io"><code class="xref py py-obj docutils literal"><span class="pre">bids.variables.io</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/bids.variables.entities.html#module-bids.variables.entities" title="bids.variables.entities"><code class="xref py py-obj docutils literal"><span class="pre">bids.variables.entities</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/bids.variables.kollekshuns.html#module-bids.variables.kollekshuns" title="bids.variables.kollekshuns"><code class="xref py py-obj docutils literal"><span class="pre">bids.variables.kollekshuns</span></code></a></td>
+<td>Classes and functions related to the management of sets of BIDSVariables.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/bids.variables.variables.html#module-bids.variables.variables" title="bids.variables.variables"><code class="xref py py-obj docutils literal"><span class="pre">bids.variables.variables</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-bids.utils">
+<span id="bids-utils-utility-functions"></span><span id="id3"></span><h2><a class="reference internal" href="#module-bids.utils" title="bids.utils"><code class="xref py py-mod docutils literal"><span class="pre">bids.utils</span></code></a>: Utility functions<a class="headerlink" href="#module-bids.utils" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-bids.utils" title="bids.utils"><code class="xref py py-obj docutils literal"><span class="pre">bids.utils</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/bids.utils.listify.html#bids.utils.listify" title="bids.utils.listify"><code class="xref py py-obj docutils literal"><span class="pre">bids.utils.listify</span></code></a>(obj)</td>
+<td>Wraps all non-list or tuple objects in a list; provides a simple way to accept flexible arguments.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/bids.utils.matches_entities.html#bids.utils.matches_entities" title="bids.utils.matches_entities"><code class="xref py py-obj docutils literal"><span class="pre">bids.utils.matches_entities</span></code></a>(obj,&nbsp;entities[,&nbsp;…])</td>
+<td>Checks whether an object’s entities match the input.</td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="id4"></span></div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="reports/index.html" class="btn btn-neutral" title="4. reports: Data acquisition report generation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 - 2018, Developers of pybids.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.1+87.g835a4c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

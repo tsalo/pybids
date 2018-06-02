@@ -1,0 +1,12 @@
+:mod:`bids.utils`.listify
+======================================
+
+.. currentmodule:: bids.utils
+
+.. autofunction:: listify
+
+.. include:: bids.utils.listify.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

@@ -1,0 +1,23 @@
+bids\.variables\.entities\.RunInfo
+==================================
+
+.. currentmodule:: bids.variables.entities
+
+.. autoclass:: RunInfo
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RunInfo.count
+      ~RunInfo.index
+   
+   
+
+   
+   
+   

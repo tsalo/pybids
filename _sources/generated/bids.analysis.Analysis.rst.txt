@@ -1,0 +1,15 @@
+:mod:`bids.analysis`.Analysis
+====================================
+
+.. currentmodule:: bids.analysis
+
+.. autoclass:: Analysis
+
+   
+   
+
+.. include:: bids.analysis.Analysis.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

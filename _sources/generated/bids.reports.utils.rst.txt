@@ -1,0 +1,29 @@
+bids.reports.utils
+==================
+
+.. automodule:: bids.reports.utils
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_seqstr
+      get_sizestr
+      get_slice_info
+      list_to_str
+      num_to_str
+      reminder
+      remove_duplicates
+   
+   
+
+   
+   
+   
+
+   
+   
+   

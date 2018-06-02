@@ -1,0 +1,490 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bids.variables.kollekshuns.BIDSRunVariableCollection &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../index.html"/>
+        <link rel="up" title="bids.variables.kollekshuns" href="bids.variables.kollekshuns.html"/>
+        <link rel="prev" title="bids.variables.kollekshuns.merge_collections" href="bids.variables.kollekshuns.merge_collections.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bids
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.grabbids"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>: Querying BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.analysis"><code class="docutils literal"><span class="pre">bids.analysis</span></code>: Model specification for BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.reports"><code class="docutils literal"><span class="pre">bids.reports</span></code>: Data acquisition report generation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#module-bids.variables"><code class="docutils literal"><span class="pre">bids.variables</span></code>: Variables</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.io.html">bids.variables.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.entities.html">bids.variables.entities</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="bids.variables.kollekshuns.html">bids.variables.kollekshuns</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.kollekshuns.merge_collections.html">bids.variables.kollekshuns.merge_collections</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">bids.variables.kollekshuns.BIDSRunVariableCollection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.kollekshuns.BIDSVariableCollection.html">bids.variables.kollekshuns.BIDSVariableCollection</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.variables.html">bids.variables.variables</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.utils"><code class="docutils literal"><span class="pre">bids.utils</span></code>: Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bids</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="bids.variables.kollekshuns.html">bids.variables.kollekshuns</a> &raquo;</li>
+        
+      <li>bids.variables.kollekshuns.BIDSRunVariableCollection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/bids.variables.kollekshuns.BIDSRunVariableCollection.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bids-variables-kollekshuns-bidsrunvariablecollection">
+<h1>bids.variables.kollekshuns.BIDSRunVariableCollection<a class="headerlink" href="#bids-variables-kollekshuns-bidsrunvariablecollection" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection">
+<em class="property">class </em><code class="descname">BIDSRunVariableCollection</code><span class="sig-paren">(</span><em>variables</em>, <em>sampling_rate=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/kollekshuns.html#BIDSRunVariableCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container for one or more RunVariables–i.e., Variables that have a
+temporal dimension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#list" title="(in Python v3.5)"><em>list</em></a>) – A list of SparseRunVariable and/or DenseRunVariable.</li>
+<li><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#float" title="(in Python v3.5)"><em>float</em></a>) – Sampling rate (in Hz) to use when working with
+dense representations of variables. If None, defaults to 10.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li>Variables in the list must all be at the ‘run’ level. For other
+levels (session, subject, or dataset), use the
+BIDSVariableCollection.</li>
+</ul>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.clone" title="bids.variables.kollekshuns.BIDSRunVariableCollection.clone"><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></a>()</td>
+<td>Returns a shallow copy of the current instance, except that all variables are deep-cloned.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.from_df" title="bids.variables.kollekshuns.BIDSRunVariableCollection.from_df"><code class="xref py py-obj docutils literal"><span class="pre">from_df</span></code></a>(data[,&nbsp;entities,&nbsp;source])</td>
+<td>Create a Collection from a pandas DataFrame.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.match_variables" title="bids.variables.kollekshuns.BIDSRunVariableCollection.match_variables"><code class="xref py py-obj docutils literal"><span class="pre">match_variables</span></code></a>(pattern[,&nbsp;return_type])</td>
+<td>Return columns whose names match the provided regex pattern.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.matches_entities" title="bids.variables.kollekshuns.BIDSRunVariableCollection.matches_entities"><code class="xref py py-obj docutils literal"><span class="pre">matches_entities</span></code></a>(entities[,&nbsp;strict])</td>
+<td>Checks whether current Collection’s entities match the input.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.merge_variables" title="bids.variables.kollekshuns.BIDSRunVariableCollection.merge_variables"><code class="xref py py-obj docutils literal"><span class="pre">merge_variables</span></code></a>(variables,&nbsp;**kwargs)</td>
+<td>Concatenates Variables along row axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.resample" title="bids.variables.kollekshuns.BIDSRunVariableCollection.resample"><code class="xref py py-obj docutils literal"><span class="pre">resample</span></code></a>([sampling_rate,&nbsp;variables,&nbsp;…])</td>
+<td>Resample all dense variables (and optionally, sparse ones) to the specified sampling rate.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.to_df" title="bids.variables.kollekshuns.BIDSRunVariableCollection.to_df"><code class="xref py py-obj docutils literal"><span class="pre">to_df</span></code></a>([variables,&nbsp;format,&nbsp;sparse,&nbsp;…])</td>
+<td>Merge columns into a single pandas DataFrame.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>variables</em>, <em>sampling_rate=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/kollekshuns.html#BIDSRunVariableCollection.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.__init__" title="bids.variables.kollekshuns.BIDSRunVariableCollection.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(variables[,&nbsp;sampling_rate])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.clone" title="bids.variables.kollekshuns.BIDSRunVariableCollection.clone"><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></a>()</td>
+<td>Returns a shallow copy of the current instance, except that all variables are deep-cloned.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.from_df" title="bids.variables.kollekshuns.BIDSRunVariableCollection.from_df"><code class="xref py py-obj docutils literal"><span class="pre">from_df</span></code></a>(data[,&nbsp;entities,&nbsp;source])</td>
+<td>Create a Collection from a pandas DataFrame.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.match_variables" title="bids.variables.kollekshuns.BIDSRunVariableCollection.match_variables"><code class="xref py py-obj docutils literal"><span class="pre">match_variables</span></code></a>(pattern[,&nbsp;return_type])</td>
+<td>Return columns whose names match the provided regex pattern.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.matches_entities" title="bids.variables.kollekshuns.BIDSRunVariableCollection.matches_entities"><code class="xref py py-obj docutils literal"><span class="pre">matches_entities</span></code></a>(entities[,&nbsp;strict])</td>
+<td>Checks whether current Collection’s entities match the input.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.merge_variables" title="bids.variables.kollekshuns.BIDSRunVariableCollection.merge_variables"><code class="xref py py-obj docutils literal"><span class="pre">merge_variables</span></code></a>(variables,&nbsp;**kwargs)</td>
+<td>Concatenates Variables along row axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.resample" title="bids.variables.kollekshuns.BIDSRunVariableCollection.resample"><code class="xref py py-obj docutils literal"><span class="pre">resample</span></code></a>([sampling_rate,&nbsp;variables,&nbsp;…])</td>
+<td>Resample all dense variables (and optionally, sparse ones) to the specified sampling rate.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.to_df" title="bids.variables.kollekshuns.BIDSRunVariableCollection.to_df"><code class="xref py py-obj docutils literal"><span class="pre">to_df</span></code></a>([variables,&nbsp;format,&nbsp;sparse,&nbsp;…])</td>
+<td>Merge columns into a single pandas DataFrame.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a shallow copy of the current instance, except that all
+variables are deep-cloned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.from_df">
+<code class="descname">from_df</code><span class="sig-paren">(</span><em>data</em>, <em>entities=None</em>, <em>source='contrast'</em><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.from_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Collection from a pandas DataFrame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – The DataFrame to convert to a Collection. Each
+column will be converted to a SimpleVariable.</li>
+<li><strong>entities</strong> (<em>DataFrame</em>) – An optional second DataFrame containing
+entity information.</li>
+<li><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – The value to set as the source for all Variables.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A BIDSVariableCollection.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.match_variables">
+<code class="descname">match_variables</code><span class="sig-paren">(</span><em>pattern</em>, <em>return_type='name'</em><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.match_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return columns whose names match the provided regex pattern.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – A regex pattern to match all variable names against.</li>
+<li><strong>return_type</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – What to return. Must be one of:
+‘name’: Returns a list of names of matching variables.
+‘variable’: Returns a list of Variable objects whose names
+match.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.matches_entities">
+<code class="descname">matches_entities</code><span class="sig-paren">(</span><em>entities</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.matches_entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether current Collection’s entities match the input.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.merge_variables">
+<code class="descname">merge_variables</code><span class="sig-paren">(</span><em>variables</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.merge_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates Variables along row axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#list" title="(in Python v3.5)"><em>list</em></a>) – List of Variables to merge. Variables can have
+different names (and all Variables that share a name will be
+concatenated together).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of Variables.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.resample">
+<code class="descname">resample</code><span class="sig-paren">(</span><em>sampling_rate=None</em>, <em>variables=None</em>, <em>force_dense=False</em>, <em>in_place=False</em>, <em>kind='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/kollekshuns.html#BIDSRunVariableCollection.resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample all dense variables (and optionally, sparse ones) to the
+specified sampling rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#int" title="(in Python v3.5)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.5/library/functions.html#float" title="(in Python v3.5)"><em>float</em></a>) – Target sampling rate (in Hz). If None,
+uses the instance sampling rate.</li>
+<li><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#list" title="(in Python v3.5)"><em>list</em></a>) – Optional list of Variables to resample. If None,
+all variables are resampled.</li>
+<li><strong>force_dense</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – if True, all sparse variables will be forced to
+dense.</li>
+<li><strong>in_place</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – When True, all variables are overwritten in-place.
+When False, returns resampled versions of all variables.</li>
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – Argument to pass to scipy’s interp1d; indicates the
+kind of interpolation approach to use. See interp1d docs for
+valid values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.kollekshuns.BIDSRunVariableCollection.to_df">
+<code class="descname">to_df</code><span class="sig-paren">(</span><em>variables=None</em>, <em>format='wide'</em>, <em>sparse=True</em>, <em>sampling_rate=None</em>, <em>include_sparse=True</em>, <em>include_dense=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/kollekshuns.html#BIDSRunVariableCollection.to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.kollekshuns.BIDSRunVariableCollection.to_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge columns into a single pandas DataFrame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#list" title="(in Python v3.5)"><em>list</em></a>) – Optional list of variable names to retain;
+if None, all variables are written out.</li>
+<li><strong>format</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – Whether to return a DataFrame in ‘wide’ or ‘long’
+format. In ‘wide’ format, each row is defined by a unique
+onset/duration, and each variable is in a separate column. In
+‘long’ format, each row is a unique combination of onset,
+duration, and variable name, and a single ‘amplitude’ column
+provides the value.</li>
+<li><strong>sparse</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – If True, variables will be kept in a sparse
+format provided they are all internally represented as such.
+If False, a dense matrix (i.e., uniform sampling rate for all
+events) will be exported. Will be ignored if at least one
+variable is dense.</li>
+<li><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#float" title="(in Python v3.5)"><em>float</em></a>) – If a dense matrix is written out, the
+sampling rate (in Hz) to use for downsampling. Defaults to the
+value currently set in the instance.</li>
+<li><strong>kwargs</strong> – Optional keyword arguments to pass onto each Variable’s
+to_df() call (e.g., condition, entities, and timing).</li>
+<li><strong>include_sparse</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – Whether or not to include sparse Variables.</li>
+<li><strong>include_dense</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – Whether or not to include dense Variables.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: A pandas DataFrame.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="bids.variables.kollekshuns.merge_collections.html" class="btn btn-neutral" title="bids.variables.kollekshuns.merge_collections" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 - 2018, Developers of pybids.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.1+87.g835a4c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

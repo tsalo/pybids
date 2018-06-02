@@ -1,0 +1,26 @@
+bids.variables.entities
+=======================
+
+.. automodule:: bids.variables.entities
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Node
+      NodeIndex
+      RunInfo
+      RunNode
+   
+   
+
+   
+   
+   

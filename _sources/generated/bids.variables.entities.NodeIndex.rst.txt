@@ -1,0 +1,26 @@
+bids\.variables\.entities\.NodeIndex
+====================================
+
+.. currentmodule:: bids.variables.entities
+
+.. autoclass:: NodeIndex
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NodeIndex.__init__
+      ~NodeIndex.add_variable
+      ~NodeIndex.get_collections
+      ~NodeIndex.get_nodes
+      ~NodeIndex.get_or_create_node
+   
+   
+
+   
+   
+   

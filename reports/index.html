@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>4. reports: Data acquisition report generation &mdash; bids 0.5.1 documentation</title>
+  <title>4. reports: Data acquisition report generation &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
   
 
   
@@ -30,14 +30,16 @@
   
 
   
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
 
   
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="bids 0.5.1 documentation" href="../index.html"/>
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../index.html"/>
         <link rel="up" title="User guide: table of contents" href="../user_guide.html"/>
-        <link rel="next" title="&lt;no title&gt;" href="../whats_new.html"/>
+        <link rel="next" title="API Reference" href="../api.html"/>
         <link rel="prev" title="3. analysis: Model specification for BIDS datasets" href="../analysis/index.html"/> 
 
   
@@ -102,6 +104,8 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">Changelog</a></li>
 </ul>
 
             
@@ -181,7 +185,7 @@
 </div>
 <div class="section" id="initializing-reports">
 <span id="id1"></span><h2><a class="toc-backref" href="#id3">4.1. Initializing reports</a><a class="headerlink" href="#initializing-reports" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="xref py py-obj docutils literal"><span class="pre">bids.reports.BIDSReport</span></code> class requires a <code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code> object as an argument:</p>
+<p>The <a class="reference internal" href="../generated/bids.reports.BIDSReport.html#bids.reports.BIDSReport" title="bids.reports.BIDSReport"><code class="xref py py-obj docutils literal"><span class="pre">bids.reports.BIDSReport</span></code></a> class requires a <a class="reference internal" href="../generated/bids.grabbids.BIDSLayout.html#bids.grabbids.BIDSLayout" title="bids.grabbids.BIDSLayout"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code></a> object as an argument:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.grabbids</span> <span class="k">import</span> <span class="n">BIDSLayout</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.reports</span> <span class="k">import</span> <span class="n">BIDSReport</span>
@@ -228,7 +232,7 @@
 <div class="section" id="generating-reports-on-subsets-of-the-data">
 <span id="generating-subreports"></span><h3>4.2.1. Generating reports on subsets of the data<a class="headerlink" href="#generating-reports-on-subsets-of-the-data" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">generate</span></code> method allows for keyword restrictions, just like
-<code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code>’s <code class="docutils literal"><span class="pre">get</span></code> method. For example, to
+<a class="reference internal" href="../generated/bids.grabbids.BIDSLayout.html#bids.grabbids.BIDSLayout" title="bids.grabbids.BIDSLayout"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code></a>’s <code class="docutils literal"><span class="pre">get</span></code> method. For example, to
 generate a report only for <code class="docutils literal"><span class="pre">nback</span></code> task data in session <code class="docutils literal"><span class="pre">01</span></code>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s1">&#39;nback&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">main_report</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -259,7 +263,7 @@ generate a report only for <code class="docutils literal"><span class="pre">nbac
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../whats_new.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../analysis/index.html" class="btn btn-neutral" title="3. analysis: Model specification for BIDS datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -293,7 +297,7 @@ generate a report only for <code class="docutils literal"><span class="pre">nbac
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.1',
+            VERSION:'0.5.1+87.g835a4c2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

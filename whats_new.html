@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>&lt;no title&gt; &mdash; bids 0.5.1 documentation</title>
+  <title>Changelog &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
   
 
   
@@ -30,13 +30,15 @@
   
 
   
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
 
   
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="bids 0.5.1 documentation" href="index.html"/>
-        <link rel="prev" title="4. reports: Data acquisition report generation" href="reports/index.html"/> 
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="index.html"/>
+        <link rel="prev" title="bids.utils.matches_entities" href="generated/bids.utils.matches_entities.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -85,8 +87,19 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-5-1-march-9-2018">Version 0.5.1 (March 9, 2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-5-0-march-6-2018">Version 0.5.0 (March 6, 2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-4-2-november-16-2017">Version 0.4.2 (November 16, 2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-4-1-november-3-2017">Version 0.4.1 (November 3, 2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-4-0-november-1-2017">Version 0.4.0 (November 1, 2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-3-0-august-11-2017">Version 0.3.0 (August 11, 2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-1-june-8-2017">Version 0.2.1 (June 8, 2017)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -131,7 +144,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>&lt;no title&gt;</li>
+      <li>Changelog</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -150,7 +163,59 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-5-1-march-9-2018">
+<h2>Version 0.5.1 (March 9, 2018)<a class="headerlink" href="#version-0-5-1-march-9-2018" title="Permalink to this headline">¶</a></h2>
+<p>Hotfix release:</p>
+<ul class="simple">
+<li>Includes data files omitted from 0.5.0 release.</li>
+<li>Improves testing of installation.</li>
+</ul>
+</div>
+<div class="section" id="version-0-5-0-march-6-2018">
+<h2>Version 0.5.0 (March 6, 2018)<a class="headerlink" href="#version-0-5-0-march-6-2018" title="Permalink to this headline">¶</a></h2>
+<p>This is a major release that introduces the following features:</p>
+<ul class="simple">
+<li>A new <code class="docutils literal"><span class="pre">bids.variables</span></code> module that adds the following submodules:<ul>
+<li><code class="docutils literal"><span class="pre">bids.variables.entities.py</span></code>: Classes for representing BIDS hierarchies as a graph-like structure.</li>
+<li><code class="docutils literal"><span class="pre">bids.variables.variables.py</span></code>: Classes and functions for representing and manipulating non-imaging data read from BIDS projects (e.g., fMRI events, densely-sampled physiological measures, etc.).</li>
+<li><code class="docutils literal"><span class="pre">bids.variables.io.py</span></code>: Tools for loading variable data from BIDS projects.</li>
+<li><code class="docutils literal"><span class="pre">bids.variables.kollekshuns</span></code>: Containers that facilitate aggregation and manipulation of <code class="docutils literal"><span class="pre">Variable</span></code> classes.</li>
+</ul>
+</li>
+<li>Extensions to the <code class="docutils literal"><span class="pre">BIDSLayout</span></code> class that make it easy to retrieve data/variables from the project (i.e., <code class="docutils literal"><span class="pre">Layout.get_collections</span></code>)</li>
+<li>A new <code class="docutils literal"><span class="pre">auto_model</span></code> utility that generates simple BIDS-Model specifications from BIDS projects (thanks to &#64;Shotgunosine)</li>
+<li>A new <code class="docutils literal"><span class="pre">reports</span></code> module that generates methods sections from metadata in BIDS projects (thanks to &#64;tsalo)</li>
+<li>Experimental support for copying/writing out files in a BIDS-compliant way</li>
+<li>Expand <code class="docutils literal"><span class="pre">bids.json</span></code> config file to include missing entity definitions</li>
+<li>Ability to parse files without updating the Layout index</li>
+<li>Updated grabbids module to reflect grabbit changes that now allow many-to-many mapping of configurations to folders</li>
+<li>Too many other minor improvements and bug fixes to list (when you’re very lazy, even a small amount of work is too much)</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-2-november-16-2017">
+<h2>Version 0.4.2 (November 16, 2017)<a class="headerlink" href="#version-0-4-2-november-16-2017" title="Permalink to this headline">¶</a></h2>
+<p>We did some minor stuff, but we were drunk again and couldn’t read our handwriting on the napkin the next morning.</p>
+</div>
+<div class="section" id="version-0-4-1-november-3-2017">
+<h2>Version 0.4.1 (November 3, 2017)<a class="headerlink" href="#version-0-4-1-november-3-2017" title="Permalink to this headline">¶</a></h2>
+<p>We did some minor stuff, and we didn’t think it was important enough to document.</p>
+</div>
+<div class="section" id="version-0-4-0-november-1-2017">
+<h2>Version 0.4.0 (November 1, 2017)<a class="headerlink" href="#version-0-4-0-november-1-2017" title="Permalink to this headline">¶</a></h2>
+<p>We did some stuff, but other stuff was happening in the news, and we were too distracted to write things down.</p>
+</div>
+<div class="section" id="version-0-3-0-august-11-2017">
+<h2>Version 0.3.0 (August 11, 2017)<a class="headerlink" href="#version-0-3-0-august-11-2017" title="Permalink to this headline">¶</a></h2>
+<p>We did some stuff, but we were drunk and forgot to write it down.</p>
+</div>
+<div class="section" id="version-0-2-1-june-8-2017">
+<h2>Version 0.2.1 (June 8, 2017)<a class="headerlink" href="#version-0-2-1-june-8-2017" title="Permalink to this headline">¶</a></h2>
+<p>History as we know it begins here.</p>
+</div>
+</div>
+
 
            </div>
            <div class="articleComments">
@@ -162,7 +227,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="reports/index.html" class="btn btn-neutral" title="4. reports: Data acquisition report generation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="generated/bids.utils.matches_entities.html" class="btn btn-neutral" title="bids.utils.matches_entities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -193,7 +258,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.1',
+            VERSION:'0.5.1+87.g835a4c2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

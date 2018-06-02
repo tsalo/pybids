@@ -1,0 +1,6 @@
+bids\.reports\.utils\.reminder
+==============================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: reminder

@@ -1,0 +1,23 @@
+bids\.variables\.entities\.Node
+===============================
+
+.. currentmodule:: bids.variables.entities
+
+.. autoclass:: Node
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Node.__init__
+      ~Node.add_variable
+   
+   
+
+   
+   
+   

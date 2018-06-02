@@ -1,0 +1,472 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bids.variables.variables.BIDSVariable &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../index.html"/>
+        <link rel="up" title="bids.variables.variables" href="bids.variables.variables.html"/>
+        <link rel="prev" title="bids.variables.variables.merge_variables" href="bids.variables.variables.merge_variables.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bids
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.grabbids"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>: Querying BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.analysis"><code class="docutils literal"><span class="pre">bids.analysis</span></code>: Model specification for BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.reports"><code class="docutils literal"><span class="pre">bids.reports</span></code>: Data acquisition report generation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#module-bids.variables"><code class="docutils literal"><span class="pre">bids.variables</span></code>: Variables</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.io.html">bids.variables.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.entities.html">bids.variables.entities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bids.variables.kollekshuns.html">bids.variables.kollekshuns</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="bids.variables.variables.html">bids.variables.variables</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.variables.merge_variables.html">bids.variables.variables.merge_variables</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">bids.variables.variables.BIDSVariable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.variables.DenseRunVariable.html">bids.variables.variables.DenseRunVariable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.variables.SimpleVariable.html">bids.variables.variables.SimpleVariable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bids.variables.variables.SparseRunVariable.html">bids.variables.variables.SparseRunVariable</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.utils"><code class="docutils literal"><span class="pre">bids.utils</span></code>: Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bids</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="bids.variables.variables.html">bids.variables.variables</a> &raquo;</li>
+        
+      <li>bids.variables.variables.BIDSVariable</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/bids.variables.variables.BIDSVariable.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bids-variables-variables-bidsvariable">
+<h1>bids.variables.variables.BIDSVariable<a class="headerlink" href="#bids-variables-variables-bidsvariable" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bids.variables.variables.BIDSVariable">
+<em class="property">class </em><code class="descname">BIDSVariable</code><span class="sig-paren">(</span><em>name</em>, <em>values</em>, <em>source</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base representation of a column in a BIDS project.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.apply" title="bids.variables.variables.BIDSVariable.apply"><code class="xref py py-obj docutils literal"><span class="pre">apply</span></code></a>(func[,&nbsp;groupby])</td>
+<td>Applies the passed function to the groups defined by the groupby argument.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.clone" title="bids.variables.variables.BIDSVariable.clone"><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></a>([data])</td>
+<td>Clone (deep copy) the current column, optionally replacing its data and/or any other attributes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.filter" title="bids.variables.variables.BIDSVariable.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([filters,&nbsp;query,&nbsp;strict,&nbsp;inplace])</td>
+<td>Returns a copy of the current Variable with only rows that match the filters retained.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.get_grouper" title="bids.variables.variables.BIDSVariable.get_grouper"><code class="xref py py-obj docutils literal"><span class="pre">get_grouper</span></code></a>([groupby])</td>
+<td>Return a pandas Grouper object suitable for use in groupby calls.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.matches_entities" title="bids.variables.variables.BIDSVariable.matches_entities"><code class="xref py py-obj docutils literal"><span class="pre">matches_entities</span></code></a>(entities[,&nbsp;strict])</td>
+<td>Checks whether current Variable’s entities match the input.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.merge" title="bids.variables.variables.BIDSVariable.merge"><code class="xref py py-obj docutils literal"><span class="pre">merge</span></code></a>(variables[,&nbsp;name])</td>
+<td>Merge/concatenate a list of variables along the row axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.to_df" title="bids.variables.variables.BIDSVariable.to_df"><code class="xref py py-obj docutils literal"><span class="pre">to_df</span></code></a>([condition,&nbsp;entities])</td>
+<td>Convert to a DataFrame, with columns for name and entities.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>values</em>, <em>source</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.__init__" title="bids.variables.variables.BIDSVariable.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(name,&nbsp;values,&nbsp;source)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.apply" title="bids.variables.variables.BIDSVariable.apply"><code class="xref py py-obj docutils literal"><span class="pre">apply</span></code></a>(func[,&nbsp;groupby])</td>
+<td>Applies the passed function to the groups defined by the groupby argument.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.clone" title="bids.variables.variables.BIDSVariable.clone"><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></a>([data])</td>
+<td>Clone (deep copy) the current column, optionally replacing its data and/or any other attributes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.filter" title="bids.variables.variables.BIDSVariable.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([filters,&nbsp;query,&nbsp;strict,&nbsp;inplace])</td>
+<td>Returns a copy of the current Variable with only rows that match the filters retained.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.get_grouper" title="bids.variables.variables.BIDSVariable.get_grouper"><code class="xref py py-obj docutils literal"><span class="pre">get_grouper</span></code></a>([groupby])</td>
+<td>Return a pandas Grouper object suitable for use in groupby calls.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.matches_entities" title="bids.variables.variables.BIDSVariable.matches_entities"><code class="xref py py-obj docutils literal"><span class="pre">matches_entities</span></code></a>(entities[,&nbsp;strict])</td>
+<td>Checks whether current Variable’s entities match the input.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.merge" title="bids.variables.variables.BIDSVariable.merge"><code class="xref py py-obj docutils literal"><span class="pre">merge</span></code></a>(variables[,&nbsp;name])</td>
+<td>Merge/concatenate a list of variables along the row axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bids.variables.variables.BIDSVariable.to_df" title="bids.variables.variables.BIDSVariable.to_df"><code class="xref py py-obj docutils literal"><span class="pre">to_df</span></code></a>([condition,&nbsp;entities])</td>
+<td>Convert to a DataFrame, with columns for name and entities.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.apply">
+<code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>groupby='run'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the passed function to the groups defined by the groupby
+argument. Works identically to the standard pandas df.groupby() call.
+:param func: The function to apply to each group.
+:type func: callable
+:param groupby: Name(s) of column(s) defining the grouping.
+:type groupby: str, list
+:param args, kwargs: Optional positional and keyword arguments to pass</p>
+<blockquote>
+<div>onto the function call.</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><em>data=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone (deep copy) the current column, optionally replacing its
+data and/or any other attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>DataFrame</em><em>, </em><em>ndarray</em>) – Optional new data to substitute into
+the cloned column. Must have same dimensionality as the
+original.</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#dict" title="(in Python v3.5)"><em>dict</em></a>) – Optional keyword arguments containing new attribute
+values to set in the copy. E.g., passing <cite>name=’my_name’</cite>
+would set the <cite>.name</cite> attribute on the cloned instance to the
+passed value.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.filter">
+<code class="descname">filter</code><span class="sig-paren">(</span><em>filters=None</em>, <em>query=None</em>, <em>strict=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the current Variable with only rows that match
+the filters retained.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#dict" title="(in Python v3.5)"><em>dict</em></a>) – Dictionary of filters to apply. Keys can be either
+‘amplitude’ or any named entity. Values must be single values
+or lists.</li>
+<li><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – Optional query string to pass to df.query(). Will not
+be validated in any way, so must have valid column names. Takes
+precedence over filters in the event that both are passed.</li>
+<li><strong>strict</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – By default, keys in ‘filters’ that cannot be found
+in the Variable will be silently ignored. If strict=True, None
+will be returned in such cases.</li>
+<li><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – If True, filtering is performed in place. If False,
+a filtered copy of the Variable is returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A BIDSVariable, or None if no rows are left after filtering.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.get_grouper">
+<code class="descname">get_grouper</code><span class="sig-paren">(</span><em>groupby='run'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.get_grouper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.get_grouper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a pandas Grouper object suitable for use in groupby calls.
+:param groupby: Name(s) of column(s) defining the grouper</p>
+<blockquote>
+<div>object. Anything that would be valid inside a .groupby() call
+on a pandas structure.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>A pandas Grouper object constructed from the specified columns</dt>
+<dd>of the current index.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.matches_entities">
+<code class="descname">matches_entities</code><span class="sig-paren">(</span><em>entities</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.matches_entities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.matches_entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether current Variable’s entities match the input.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bids.variables.variables.BIDSVariable.merge">
+<em class="property">classmethod </em><code class="descname">merge</code><span class="sig-paren">(</span><em>variables</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge/concatenate a list of variables along the row axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#list" title="(in Python v3.5)"><em>list</em></a>) – A list of Variables to merge.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><em>str</em></a>) – Optional name to assign to the output Variable. By
+default, uses the same name as the input variables.</li>
+<li><strong>kwargs</strong> – Optional keyword arguments to pass onto the class-specific
+merge() call. See merge_variables docstring for details.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A single BIDSVariable of the same class as the input variables.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Notes: see merge_variables docstring for additional details.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bids.variables.variables.BIDSVariable.to_df">
+<code class="descname">to_df</code><span class="sig-paren">(</span><em>condition=True</em>, <em>entities=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bids/variables/variables.html#BIDSVariable.to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bids.variables.variables.BIDSVariable.to_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a DataFrame, with columns for name and entities.
+:param condition: If True, adds a column for condition name, and</p>
+<blockquote>
+<div>names the amplitude column ‘amplitude’. If False, returns just
+onset, duration, and amplitude, and gives the amplitude column
+the current column name.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entities</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/functions.html#bool" title="(in Python v3.5)"><em>bool</em></a>) – If True, adds extra columns for all entities.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="bids.variables.variables.merge_variables.html" class="btn btn-neutral" title="bids.variables.variables.merge_variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 - 2018, Developers of pybids.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.1+87.g835a4c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

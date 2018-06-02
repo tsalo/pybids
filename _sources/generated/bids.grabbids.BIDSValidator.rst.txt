@@ -1,0 +1,15 @@
+:mod:`bids.grabbids`.BIDSValidator
+=========================================
+
+.. currentmodule:: bids.grabbids
+
+.. autoclass:: BIDSValidator
+
+   
+   
+
+.. include:: bids.grabbids.BIDSValidator.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

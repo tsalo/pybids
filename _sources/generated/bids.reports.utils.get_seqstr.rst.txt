@@ -1,0 +1,6 @@
+bids\.reports\.utils\.get\_seqstr
+=================================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: get_seqstr

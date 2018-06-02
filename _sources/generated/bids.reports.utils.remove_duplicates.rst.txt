@@ -1,0 +1,6 @@
+bids\.reports\.utils\.remove\_duplicates
+========================================
+
+.. currentmodule:: bids.reports.utils
+
+.. autofunction:: remove_duplicates

@@ -1,0 +1,1340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>grabbit.core &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> bids
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../whats_new.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">bids</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>grabbit.core</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for grabbit.core</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">grabbit.external</span> <span class="k">import</span> <span class="n">six</span><span class="p">,</span> <span class="n">inflect</span>
+<span class="kn">from</span> <span class="nn">grabbit.utils</span> <span class="k">import</span> <span class="n">natural_sort</span><span class="p">,</span> <span class="n">listify</span>
+<span class="kn">from</span> <span class="nn">grabbit.extensions.writable</span> <span class="k">import</span> <span class="n">build_path</span><span class="p">,</span> <span class="n">write_contents_to_file</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">isdir</span><span class="p">,</span>
+                     <span class="n">relpath</span><span class="p">,</span> <span class="n">isabs</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">keyword</span> <span class="k">import</span> <span class="n">iskeyword</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;File&#39;</span><span class="p">,</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span> <span class="s1">&#39;Layout&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Represents a single file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">entities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">domains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span>
+
+    <span class="k">def</span> <span class="nf">_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">regex_search</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether the file matches all of the passed entities and</span>
+<span class="sd">        extensions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entities (dict): A dictionary of entity names -&gt; regex patterns.</span>
+<span class="sd">            extensions (str, list): One or more file extensions to allow.</span>
+<span class="sd">            domains (str, list): One or more domains the file must match.</span>
+<span class="sd">            regex_search (bool): Whether to require exact match (False) or</span>
+<span class="sd">                regex search (True) when comparing the query string to each</span>
+<span class="sd">                entity.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if _all_ entities and extensions match; False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">extensions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extensions</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="n">extensions</span><span class="p">]</span>
+            <span class="n">extensions</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)$&#39;</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">extensions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">domains</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domains</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">domains</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">entities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">def</span> <span class="nf">make_patt</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                    <span class="n">patt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                        <span class="c1"># allow for leading zeros if a number was specified</span>
+                        <span class="c1"># regardless of regex_search</span>
+                        <span class="n">patt</span> <span class="o">=</span> <span class="s1">&#39;0*&#39;</span> <span class="o">+</span> <span class="n">patt</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">regex_search</span><span class="p">:</span>
+                        <span class="n">patt</span> <span class="o">=</span> <span class="s1">&#39;^</span><span class="si">%s</span><span class="s1">$&#39;</span> <span class="o">%</span> <span class="n">patt</span>
+                    <span class="k">return</span> <span class="n">patt</span>
+
+                <span class="n">ent_patts</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_patt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">val</span><span class="p">)]</span>
+                <span class="n">patt</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ent_patts</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">patt</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">as_named_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the File as a named tuple. The full path plus all entity</span>
+<span class="sd">        key/value pairs are returned as attributes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">replaced</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">iskeyword</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">replaced</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">keys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_&#39;</span> <span class="o">%</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="n">replaced</span><span class="p">:</span>
+            <span class="n">safe</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_&#39;</span> <span class="o">%</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">replaced</span><span class="p">]</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Entity names cannot be reserved keywords when &quot;</span>
+                          <span class="s2">&quot;representing a File as a namedtuple. Replacing &quot;</span>
+                          <span class="s2">&quot;entities </span><span class="si">%s</span><span class="s2"> with safe versions </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">safe</span><span class="p">))</span>
+        <span class="n">entities</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">_File</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;File&#39;</span><span class="p">,</span> <span class="s1">&#39;filename &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entities</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">_File</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">entities</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_patterns</span><span class="p">,</span> <span class="n">symbolic_link</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">conflicts</span><span class="o">=</span><span class="s1">&#39;fail&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Copy the contents of a file to a new location, with target</span>
+<span class="sd">        filename defined by the current File&#39;s entities and the specified</span>
+<span class="sd">        path_patterns. &#39;&#39;&#39;</span>
+        <span class="n">new_filename</span> <span class="o">=</span> <span class="n">build_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">,</span> <span class="n">path_patterns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_filename</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">new_filename</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">:</span>
+            <span class="n">new_filename</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+
+        <span class="k">if</span> <span class="n">isabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Target filename to copy/symlink (</span><span class="si">%s</span><span class="s2">) doesn&#39;t &quot;</span>
+                             <span class="s2">&quot;exist.&quot;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">symbolic_link</span><span class="p">:</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">link_to</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">link_to</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">write_contents_to_file</span><span class="p">(</span><span class="n">new_filename</span><span class="p">,</span> <span class="n">contents</span><span class="o">=</span><span class="n">contents</span><span class="p">,</span>
+                               <span class="n">link_to</span><span class="o">=</span><span class="n">link_to</span><span class="p">,</span> <span class="n">content_mode</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span>
+                               <span class="n">conflicts</span><span class="o">=</span><span class="n">conflicts</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Domain</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A set of rules that applies to one or more directories</span>
+<span class="sd">        within a Layout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): The name of the Domain.</span>
+<span class="sd">            config (dict): The configuration dictionary that defines the</span>
+<span class="sd">                entities and paths for the current domain.</span>
+<span class="sd">            root (str, list): The root directory or directories to which the</span>
+<span class="sd">                Domain&#39;s rules applies. Can be either a single path, or a list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">include</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;include&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exclude&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The &#39;include&#39; and &#39;exclude&#39; arguments cannot &quot;</span>
+                             <span class="s2">&quot;both be set. Please pass at most one of these &quot;</span>
+                             <span class="s2">&quot;for domain &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_patterns</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default_path_patterns&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+
+    <span class="k">def</span> <span class="nf">add_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ent</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Add an Entity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ent (Entity): The Entity to add.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">ent</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent</span>
+
+    <span class="k">def</span> <span class="nf">add_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Add a file to tracking.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file (File): The File to add to tracking.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+
+<span class="n">Tag</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Tag&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">Entity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mandatory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">map_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Represents a single entity defined in the JSON config.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): The name of the entity (e.g., &#39;subject&#39;, &#39;run&#39;, etc.)</span>
+<span class="sd">            pattern (str): A regex pattern used to match against file names.</span>
+<span class="sd">                Must define at least one group, and only the first group is</span>
+<span class="sd">                kept as the match.</span>
+<span class="sd">            domain (Domain): The Domain the Entity belongs to.</span>
+<span class="sd">            mandatory (bool): If True, every File _must_ match this entity.</span>
+<span class="sd">            directory (str): Optional pattern defining a directory associated</span>
+<span class="sd">                with the entity.</span>
+<span class="sd">            map_func (callable): Optional callable used to extract the Entity&#39;s</span>
+<span class="sd">                value from the passed string (instead of trying to match on the</span>
+<span class="sd">                defined .pattern).</span>
+<span class="sd">            dtype (str): The optional data type of the Entity values. Must be</span>
+<span class="sd">                one of &#39;int&#39;, &#39;float&#39;, &#39;bool&#39;, or &#39;str&#39;. If None, no type</span>
+<span class="sd">                enforcement will be attempted, which means the dtype of the</span>
+<span class="sd">                value may be unpredictable.</span>
+<span class="sd">            aliases (str or list): Alternative names for the entity.</span>
+<span class="sd">            kwargs (dict): Additional keyword arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">map_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid specification for Entity &#39;</span><span class="si">%s</span><span class="s2">&#39;; no &quot;</span>
+                             <span class="s2">&quot;pattern or mapping function provided. Either the&quot;</span>
+                             <span class="s2">&quot; &#39;pattern&#39; or the &#39;map_func&#39; arguments must be &quot;</span>
+                             <span class="s2">&quot;set.&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandatory</span> <span class="o">=</span> <span class="n">mandatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">map_func</span> <span class="o">=</span> <span class="n">map_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid dtype &#39;</span><span class="si">%s</span><span class="s2">&#39;. Must be one of int, float, &quot;</span>
+                             <span class="s2">&quot;bool, or str.&quot;</span> <span class="o">%</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">domain_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">domain_name</span><span class="p">,</span> <span class="n">name</span><span class="p">])</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">aliases</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">listify</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">domain_name</span><span class="p">,</span> <span class="n">alias</span><span class="p">])</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="k">yield</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;regex&#39;</span> <span class="k">else</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">new_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">match_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">update_file</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine whether the passed file matches the Entity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            f (File): The File instance to match against.</span>
+
+<span class="sd">        Returns: the matched value if a match was found, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_func</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">add_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Adds the specified filename to tracking. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns all unique values/levels for the current entity. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a count of unique values or files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            files (bool): When True, counts all files mapped to the Entity.</span>
+<span class="sd">                When False, counts all unique values.</span>
+<span class="sd">        Returns: an int.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)</span> <span class="k">if</span> <span class="n">files</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">LayoutMetaclass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Metaclass for Layout; used to enable merging of multiple Layouts into</span>
+<span class="sd">    a single Layout when a list of paths is passed as input.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LayoutMetaclass</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">layouts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+            <span class="n">layout</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LayoutMetaclass</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">layouts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">merge_layouts</span><span class="p">(</span><span class="n">layouts</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Layout</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">LayoutMetaclass</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dynamic_getters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">absolute_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">regex_search</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">entity_mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_patterns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">config_filename</span><span class="o">=</span><span class="s1">&#39;layout.json&#39;</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A container for all the files and metadata found at the specified path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            root (str): Directory that all other paths will be relative to.</span>
+<span class="sd">            Every other path the Layout sees must be at this level or below.</span>
+<span class="sd">            domains (str, list, dict): A specification of the configuration</span>
+<span class="sd">                object(s) defining domains to use in the Layout. Can be one of:</span>
+
+<span class="sd">                - A dictionary containing config information</span>
+<span class="sd">                - A string giving the path to a JSON file containing the config</span>
+<span class="sd">                - A string giving the path to a directory containing a</span>
+<span class="sd">                  configuration file with the name defined in config_filename</span>
+<span class="sd">                - A tuple with two elements, where the first element is one of</span>
+<span class="sd">                  the above (i.e., dict or string), and the second element is</span>
+<span class="sd">                  an iterable of directories to apply the config to.</span>
+<span class="sd">                - A list, where each element is any of the above (dict, string,</span>
+<span class="sd">                  or tuple).</span>
+
+<span class="sd">            index (str): Optional path to a saved index file. If a valid value</span>
+<span class="sd">                is passed, this index is used to populate Files and Entities,</span>
+<span class="sd">                and the normal indexing process (which requires scanning all</span>
+<span class="sd">                files in the project) is skipped.</span>
+<span class="sd">            dynamic_getters (bool): If True, a get_{entity_name}() method will</span>
+<span class="sd">                be dynamically added to the Layout every time a new Entity is</span>
+<span class="sd">                created. This is implemented by creating a partial function of</span>
+<span class="sd">                the get() function that sets the target argument to the</span>
+<span class="sd">                entity name.</span>
+<span class="sd">            absolute_paths (bool): If True, grabbit uses absolute file paths</span>
+<span class="sd">                everywhere (including when returning query results). If False,</span>
+<span class="sd">                the input path will determine the behavior (i.e., relative if</span>
+<span class="sd">                a relative path was passed, absolute if an absolute path was</span>
+<span class="sd">                passed).</span>
+<span class="sd">            regex_search (bool): Whether to require exact matching (True)</span>
+<span class="sd">                or regex search (False, default) when comparing the query</span>
+<span class="sd">                string to each entity in .get() calls. This sets a default for</span>
+<span class="sd">                the instance, but can be overridden in individual .get()</span>
+<span class="sd">                requests.</span>
+<span class="sd">            entity_mapper (object, str): An optional object containing methods</span>
+<span class="sd">                for indexing specific entities. If passed, the object must</span>
+<span class="sd">                contain a named method for every value that appears in the</span>
+<span class="sd">                JSON config file under the &quot;mapper&quot; key of an Entity&#39;s entry.</span>
+<span class="sd">                For example, if an entity &quot;type&quot; is defined that contains the</span>
+<span class="sd">                key/value pair &quot;mapper&quot;: &quot;extract_type&quot;, then the passed object</span>
+<span class="sd">                must contain an .extract_type() method.</span>
+<span class="sd">                    Alternatively, the special string &quot;self&quot; can be passed, in</span>
+<span class="sd">                which case the current Layout instance will be used as the</span>
+<span class="sd">                entity mapper (implying that the user has subclassed Layout).</span>
+<span class="sd">            path_patterns (str, list): One or more filename patterns to use</span>
+<span class="sd">                as a default path pattern for this layout&#39;s files.  Can also</span>
+<span class="sd">                be specified in the config file.</span>
+<span class="sd">            config_filename (str): The name of directory-specific config files.</span>
+<span class="sd">                Every directory will be scanned for this file, and if found,</span>
+<span class="sd">                the config file will be read in and added to the list of</span>
+<span class="sd">                configs.</span>
+<span class="sd">            include (str, list): A string or list specifying regexes used to</span>
+<span class="sd">                globally filter files when indexing. A file or directory</span>
+<span class="sd">                *must* match at least of the passed values in order to be</span>
+<span class="sd">                retained in the index. Cannot be used together with &#39;exclude&#39;.</span>
+<span class="sd">            exclude (str, list): A string or list specifying regexes used to</span>
+<span class="sd">                globally filter files when indexing. If a file or directory</span>
+<span class="sd">                *must* matches any of the passed values, it will be dropped</span>
+<span class="sd">                from indexing. Cannot be used together with &#39;include&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot specify both the include and exclude&quot;</span>
+                             <span class="s2">&quot; arguments. Please pass at most one of these.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandatory</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_getters</span> <span class="o">=</span> <span class="n">dynamic_getters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex_search</span> <span class="o">=</span> <span class="n">regex_search</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_mapper</span> <span class="o">=</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">entity_mapper</span> <span class="o">==</span> <span class="s1">&#39;self&#39;</span> <span class="k">else</span> <span class="n">entity_mapper</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_patterns</span> <span class="o">=</span> <span class="n">path_patterns</span> <span class="k">if</span> <span class="n">path_patterns</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span> <span class="o">=</span> <span class="n">config_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">include</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">exclude</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_paths</span> <span class="o">=</span> <span class="n">absolute_paths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="k">if</span> <span class="n">absolute_paths</span> <span class="k">else</span> <span class="n">root</span>
+
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">c</span><span class="p">,</span> <span class="n">root</span> <span class="o">=</span> <span class="n">c</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">root</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_load_domain</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_load_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_init</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">isdir</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Config file &#39;</span><span class="si">%s</span><span class="s2">&#39; cannot be found.&quot;</span> <span class="o">%</span> <span class="n">config</span><span class="p">)</span>
+
+            <span class="n">config_filename</span> <span class="o">=</span> <span class="n">config</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">from_init</span><span class="p">:</span>
+                <span class="n">root</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">config_filename</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Config file missing &#39;name&#39; attribute.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Config with name &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists in &quot;</span>
+                             <span class="s2">&quot;Layout. Name of each config file must be &quot;</span>
+                             <span class="s2">&quot;unique across entire Layout.&quot;</span> <span class="o">%</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">from_init</span><span class="p">:</span>
+            <span class="c1"># warnings.warn(&quot;No valid root directory found for domain &#39;%s&#39;. &quot;</span>
+            <span class="c1">#               &quot;Falling back on root directory for Layout (%s).&quot;</span>
+            <span class="c1">#               % (config[&#39;name&#39;], self.root))</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">]:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span>
+
+        <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Root directory </span><span class="si">%s</span><span class="s2"> for domain </span><span class="si">%s</span><span class="s2"> does not &quot;</span>
+                                 <span class="s2">&quot;exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># Load entities</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">config</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;entities&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_entity</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="o">**</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">domain</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">domain</span>
+        <span class="k">return</span> <span class="n">domain</span>
+
+    <span class="k">def</span> <span class="nf">get_domain_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Get all Entities included in the specified Domains, in the same</span>
+        <span class="c1"># order as Domains in the list.</span>
+        <span class="k">if</span> <span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">ents</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+            <span class="n">ents</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ents</span>
+
+    <span class="k">def</span> <span class="nf">_check_inclusions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fullpath</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Check file or directory against regexes in config to determine if</span>
+<span class="sd">            it should be included in the index &#39;&#39;&#39;</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="k">else</span> <span class="n">f</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fullpath</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">dom</span><span class="p">]</span> <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">domains</span><span class="p">)]</span>
+
+        <span class="c1"># Inject the Layout at the first position for global include/exclude</span>
+        <span class="n">domains</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+            <span class="c1"># If file matches any include regex, then True</span>
+            <span class="k">if</span> <span class="n">dom</span><span class="o">.</span><span class="n">include</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">regex</span> <span class="ow">in</span> <span class="n">dom</span><span class="o">.</span><span class="n">include</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If file matches any exclude regex, then False</span>
+                <span class="k">for</span> <span class="n">regex</span> <span class="ow">in</span> <span class="n">dom</span><span class="o">.</span><span class="n">exclude</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_validate_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Extend this in subclasses to provide additional directory</span>
+<span class="sd">        validation. Will be called the first time a directory is read in; if</span>
+<span class="sd">        False is returned, the directory will be ignored and dropped from the</span>
+<span class="sd">        layout.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_file</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_validate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Extend this in subclasses to provide additional file validation.</span>
+<span class="sd">        Will be called the first time each file is read in; if False is</span>
+<span class="sd">        returned, the file will be ignored and dropped from the layout. &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns all files in project (pre-filtering). Extend this in</span>
+<span class="sd">        subclasses as needed. &#39;&#39;&#39;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">topdown</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">root</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_make_file_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Initialize a new File oject from a directory and filename. Extend</span>
+<span class="sd">        in subclasses as needed. &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">File</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_reset_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Reset indexes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">ent</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">domains</span><span class="p">,</span> <span class="n">update_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="c1"># Create the file object--allows for subclassing</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_file_object</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">domains</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot index file &#39;</span><span class="si">%s</span><span class="s2">&#39; in domain &#39;</span><span class="si">%s</span><span class="s2">&#39;; &quot;</span>
+                                 <span class="s2">&quot;no domain with that name exists.&quot;</span> <span class="o">%</span>
+                                 <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+            <span class="n">match_vals</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">domain</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">match_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">mandatory</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">match_vals</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">match_vals</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">ent</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="n">match_vals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="n">ent</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">update_layout</span><span class="p">:</span>
+                        <span class="n">ent</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">update_layout</span><span class="p">:</span>
+                <span class="n">domain</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">def</span> <span class="nf">_find_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Find an Entity instance by name. Checks both name and id fields.&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span>
+        <span class="n">_ent</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">entity</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_ent</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Entity name &#39;</span><span class="si">%s</span><span class="s2">&#39; matches </span><span class="si">%d</span><span class="s2"> entities. To &quot;</span>
+                             <span class="s2">&quot;avoid ambiguity, please prefix the entity &quot;</span>
+                             <span class="s2">&quot;name with its domain (e.g., &#39;bids.</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_ent</span><span class="p">),</span> <span class="n">entity</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">_ent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_ent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No entity &#39;</span><span class="si">%s</span><span class="s2">&#39; found.&quot;</span> <span class="o">%</span> <span class="n">entity</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_index</span><span class="p">()</span>
+
+        <span class="c1"># Track all candidate files</span>
+        <span class="n">files_to_index</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+
+        <span class="c1"># Track any additional config files we run into</span>
+        <span class="n">extra_configs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">def</span> <span class="nf">_index_domain_files</span><span class="p">(</span><span class="n">dom</span><span class="p">):</span>
+
+            <span class="n">doms_to_add</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dom</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;domains&#39;</span><span class="p">,</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="n">dom</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+
+            <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_files</span><span class="p">(</span><span class="n">dom</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">])</span>
+
+            <span class="c1"># Loop over all files in domain</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">directories</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+
+                <span class="k">def</span> <span class="nf">check_incl</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_inclusions</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dom</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="c1"># Exclude directories that match exclude regex</span>
+                <span class="n">full_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">]</span>
+                <span class="n">full_dirs</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">check_incl</span><span class="p">,</span> <span class="n">full_dirs</span><span class="p">)</span>
+                <span class="n">full_dirs</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validate_dir</span><span class="p">,</span> <span class="n">full_dirs</span><span class="p">)</span>
+                <span class="n">directories</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">split</span><span class="p">(</span><span class="n">d</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">full_dirs</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+                    <span class="n">full_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                    <span class="c1"># Add config file to tracking</span>
+                    <span class="k">if</span> <span class="n">f</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">full_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extra_configs</span><span class="p">:</span>
+                            <span class="n">extra_configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+                    <span class="c1"># Add file to the candidate index</span>
+                    <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_inclusions</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="n">dom</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">_validate_file</span><span class="p">(</span><span class="n">full_path</span><span class="p">)):</span>
+                        <span class="c1"># If the file is below the Layout root, use a relative</span>
+                        <span class="c1"># path. Otherwise, use absolute path.</span>
+                        <span class="k">if</span> <span class="n">full_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
+                                <span class="bp">self</span><span class="o">.</span><span class="n">absolute_paths</span><span class="p">:</span>
+                            <span class="n">full_path</span> <span class="o">=</span> <span class="n">relpath</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+                        <span class="n">files_to_index</span><span class="p">[</span><span class="n">full_path</span><span class="p">]</span> <span class="o">|=</span> <span class="n">doms_to_add</span>
+
+        <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">_index_domain_files</span><span class="p">(</span><span class="n">dom</span><span class="p">)</span>
+
+        <span class="c1"># Set up any additional configs we found. Note that in edge cases,</span>
+        <span class="c1"># this approach has the potential to miss out on some configs, because</span>
+        <span class="c1"># it doesn&#39;t recurse. This will generally only happen under fairly</span>
+        <span class="c1"># weird circumstances though (e.g., the config file points to another</span>
+        <span class="c1"># root elsewhere in the filesystem, or there are inconsistent include/</span>
+        <span class="c1"># exclude directives across nested configs), so this will do for now.</span>
+        <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">extra_configs</span><span class="p">:</span>
+            <span class="n">dom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_domain</span><span class="p">(</span><span class="n">dom</span><span class="p">)</span>
+            <span class="n">_index_domain_files</span><span class="p">(</span><span class="n">dom</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">domains</span> <span class="ow">in</span> <span class="n">files_to_index</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_dir</span><span class="p">,</span> <span class="n">_base</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_index_file</span><span class="p">(</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_base</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">domains</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">save_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Save the current Layout&#39;s index to a .json file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Filename to write to.</span>
+
+<span class="sd">        Note: At the moment, this won&#39;t serialize directory-specific config</span>
+<span class="sd">        files. This means reconstructed indexes will only work properly in</span>
+<span class="sd">        cases where there aren&#39;t multiple layout specs within a project.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">entities</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;domains&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">domains</span><span class="p">,</span> <span class="s1">&#39;entities&#39;</span><span class="p">:</span> <span class="n">entities</span><span class="p">}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Load the Layout&#39;s index from a plaintext file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Path to the plaintext index file.</span>
+<span class="sd">            reindex (bool): If True, discards entity values provided in the</span>
+<span class="sd">                loaded index and instead re-indexes every file in the loaded</span>
+<span class="sd">                index against the entities defined in the config. Default is</span>
+<span class="sd">                False, in which case it is assumed that all entity definitions</span>
+<span class="sd">                in the loaded index are correct and do not need any further</span>
+<span class="sd">                validation.</span>
+
+<span class="sd">        Note: At the moment, directory-specific config files aren&#39;t serialized.</span>
+<span class="sd">        This means reconstructed indexes will only work properly in cases</span>
+<span class="sd">        where there aren&#39;t multiple layout specs within a project.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_index</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">ents</span><span class="p">,</span> <span class="n">domains</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="s1">&#39;entities&#39;</span><span class="p">],</span> <span class="n">file</span><span class="p">[</span><span class="s1">&#39;domains&#39;</span><span class="p">]</span>
+
+            <span class="n">root</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reindex</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index_file</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">domains</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_file_object</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="n">tags</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Tag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ents</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+
+                <span class="k">for</span> <span class="n">ent</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">ent</span><span class="p">]</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Add a new Entity to tracking. &#39;&#39;&#39;</span>
+
+        <span class="c1"># Set the entity&#39;s mapping func if one was specified</span>
+        <span class="n">map_func</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;map_func&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">map_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;map_func&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_mapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mapping function &#39;</span><span class="si">%s</span><span class="s2">&#39; specified for Entity &quot;</span>
+                                 <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;, but no entity mapper was passed when &quot;</span>
+                                 <span class="s2">&quot;initializing the current Layout. Please make&quot;</span>
+                                 <span class="s2">&quot; sure the &#39;entity_mapper&#39; argument is set.&quot;</span> <span class="o">%</span>
+                                 <span class="p">(</span><span class="n">map_func</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
+            <span class="n">map_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_mapper</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;map_func&#39;</span><span class="p">])</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;map_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">map_func</span>
+
+        <span class="n">ent</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">domain</span><span class="o">.</span><span class="n">add_entity</span><span class="p">(</span><span class="n">ent</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ent</span><span class="o">.</span><span class="n">mandatory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mandatory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ent</span><span class="o">.</span><span class="n">directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ent</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">ent</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{{root}}&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">ent</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">ent</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_getters</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">),</span> <span class="n">target</span><span class="o">=</span><span class="n">ent</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                           <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+            <span class="n">func_name</span> <span class="o">=</span> <span class="n">inflect</span><span class="o">.</span><span class="n">engine</span><span class="p">()</span><span class="o">.</span><span class="n">plural</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;get_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">regex_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve files and/or metadata from the current Layout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            return_type (str): Type of result to return. Valid values:</span>
+<span class="sd">                &#39;tuple&#39;: returns a list of namedtuples containing file name as</span>
+<span class="sd">                    well as attribute/value pairs for all named entities.</span>
+<span class="sd">                &#39;file&#39;: returns a list of matching filenames.</span>
+<span class="sd">                &#39;dir&#39;: returns a list of directories.</span>
+<span class="sd">                &#39;id&#39;: returns a list of unique IDs. Must be used together with</span>
+<span class="sd">                    a valid target.</span>
+<span class="sd">                &#39;obj&#39;: returns a list of matching File objects.</span>
+<span class="sd">            target (str): The name of the target entity to get results for</span>
+<span class="sd">                (if return_type is &#39;dir&#39; or &#39;id&#39;).</span>
+<span class="sd">            extensions (str, list): One or more file extensions to filter on.</span>
+<span class="sd">                Files with any other extensions will be excluded.</span>
+<span class="sd">            domains (list): Optional list of domain names to scan for files.</span>
+<span class="sd">                If None, all available domains are scanned.</span>
+<span class="sd">            regex_search (bool or None): Whether to require exact matching</span>
+<span class="sd">                (False) or regex search (True) when comparing the query string</span>
+<span class="sd">                to each entity. If None (default), uses the value found in</span>
+<span class="sd">                self.</span>
+<span class="sd">            kwargs (dict): Any optional key/values to filter the entities on.</span>
+<span class="sd">                Keys are entity names, values are regexes to filter on. For</span>
+<span class="sd">                example, passing filter={ &#39;subject&#39;: &#39;sub-[12]&#39;} would return</span>
+<span class="sd">                only files that match the first two subjects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A named tuple (default) or a list (see return_type for details).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">regex_search</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">regex_search</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex_search</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">filters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">_matches</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">domains</span><span class="p">,</span> <span class="n">regex_search</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_type</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">natural_sort</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">return_type</span> <span class="o">==</span> <span class="s1">&#39;tuple&#39;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">as_named_tuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">natural_sort</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valid_entities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_domain_entities</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;If return_type is &quot;id&quot; or &quot;dir&quot;, a valid &#39;</span>
+                                 <span class="s1">&#39;target entity must also be specified.&#39;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">entities</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">return_type</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">natural_sort</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">return_type</span> <span class="o">==</span> <span class="s1">&#39;dir&#39;</span><span class="p">:</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="n">valid_entities</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">directory</span>
+                <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Return type set to directory, but no &#39;</span>
+                                     <span class="s1">&#39;directory template is defined for the &#39;</span>
+                                     <span class="s1">&#39;target entity (</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s1">).&#39;</span> <span class="o">%</span> <span class="n">target</span><span class="p">)</span>
+                <span class="c1"># Construct regex search pattern from target directory template</span>
+                <span class="n">to_rep</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;\{(.*?)\}&#39;</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">to_rep</span><span class="p">:</span>
+                    <span class="n">patt</span> <span class="o">=</span> <span class="n">valid_entities</span><span class="p">[</span><span class="n">ent</span><span class="p">]</span><span class="o">.</span><span class="n">pattern</span>
+                    <span class="n">template</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">ent</span><span class="p">,</span> <span class="n">patt</span><span class="p">)</span>
+                <span class="n">template</span> <span class="o">+=</span> <span class="s1">&#39;[^\</span><span class="si">%s</span><span class="s1">]*$&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">dirname</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                           <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">dirname</span><span class="p">)]</span>
+                <span class="k">return</span> <span class="n">natural_sort</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">matches</span><span class="p">)))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid return_type specified (must be one &quot;</span>
+                                 <span class="s2">&quot;of &#39;tuple&#39;, &#39;file&#39;, &#39;id&#39;, or &#39;dir&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of unique values for the named entity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entity (str): The name of the entity to retrieve unique values of.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_entity</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the count of unique values or files for the named entity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entity (str): The name of the entity.</span>
+<span class="sd">            files (bool): If True, counts the number of filenames that contain</span>
+<span class="sd">                at least one value of the entity, rather than the number of</span>
+<span class="sd">                unique values of the entity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_entity</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">as_data_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return information for all Files tracked in the Layout as a pandas</span>
+<span class="sd">        DataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs: Optional keyword arguments passed on to get(). This allows</span>
+<span class="sd">                one to easily select only a subset of files for export.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas DataFrame, where each row is a file, and each column is</span>
+<span class="sd">                a tracked entity. NaNs are injected whenever a file has no</span>
+<span class="sd">                value for a given attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;What are you doing trying to export a Layout &quot;</span>
+                              <span class="s2">&quot;as a pandas DataFrame when you don&#39;t have &quot;</span>
+                              <span class="s2">&quot;pandas installed? Eh? Eh?&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;obj&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">entities</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">])</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">get_nearest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">all_</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">ignore_strict_entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Walk up the file tree from the specified path and return the</span>
+<span class="sd">        nearest matching file(s).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): The file to search from.</span>
+<span class="sd">            return_type (str): What to return; must be one of &#39;file&#39; (default)</span>
+<span class="sd">                or &#39;tuple&#39;.</span>
+<span class="sd">            strict (bool): When True, all entities present in both the input</span>
+<span class="sd">                path and the target file(s) must match perfectly. When False,</span>
+<span class="sd">                files will be ordered by the number of matching entities, and</span>
+<span class="sd">                partial matches will be allowed.</span>
+<span class="sd">            all_ (bool): When True, returns all matching files. When False</span>
+<span class="sd">                (default), only returns the first match.</span>
+<span class="sd">            ignore_strict_entities (list): Optional list of entities to</span>
+<span class="sd">                exclude from strict matching when strict is True. This allows</span>
+<span class="sd">                one to search, e.g., for files of a different type while</span>
+<span class="sd">                matching all other entities perfectly by passing</span>
+<span class="sd">                ignore_strict_entities=[&#39;type&#39;].</span>
+<span class="sd">            kwargs: Optional keywords to pass on to .get().</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">entities</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">ent</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">entities</span><span class="p">[</span><span class="n">ent</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Remove any entities we want to ignore when strict matching is on</span>
+        <span class="k">if</span> <span class="n">strict</span> <span class="ow">and</span> <span class="n">ignore_strict_entities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ignore_strict_entities</span><span class="p">:</span>
+                <span class="n">entities</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">folders</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span>
+            <span class="n">folders</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">dirname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">count_matches</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="n">f_ents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">entities</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">entities</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">f_ents</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">shared</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">shared</span><span class="p">,</span> <span class="nb">sum</span><span class="p">([</span><span class="n">entities</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">f_ents</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">])]</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">folders</span> <span class="ow">and</span> <span class="n">folders</span><span class="p">[</span><span class="n">path</span><span class="p">]:</span>
+
+                <span class="c1"># Sort by number of matching entities. Also store number of</span>
+                <span class="c1"># common entities, for filtering when strict=True.</span>
+                <span class="n">num_ents</span> <span class="o">=</span> <span class="p">[[</span><span class="n">f</span><span class="p">]</span> <span class="o">+</span> <span class="n">count_matches</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">[</span><span class="n">path</span><span class="p">]]</span>
+                <span class="c1"># Filter out imperfect matches (i.e., where number of common</span>
+                <span class="c1"># entities does not equal number of matching entities).</span>
+                <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+                    <span class="n">num_ents</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">num_ents</span> <span class="k">if</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+                <span class="n">num_ents</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">num_ents</span><span class="p">:</span>
+                    <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_ents</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">all_</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">_path</span> <span class="o">==</span> <span class="n">path</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">_path</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="n">return_type</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span> <span class="k">else</span> <span class="n">m</span><span class="o">.</span><span class="n">as_named_tuple</span><span class="p">()</span>
+                   <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">all_</span> <span class="k">else</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">matches</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse_file_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">root</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;If a relative path is provided as the filename &quot;</span>
+                       <span class="s2">&quot;argument, you *must* specify the names of the &quot;</span>
+                       <span class="s2">&quot;domains whose entities are to be extracted. &quot;</span>
+                       <span class="s2">&quot;Available domains for the current layout are: </span><span class="si">%s</span><span class="s2">&quot;</span>
+                       <span class="o">%</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">domains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_file</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">domains</span><span class="p">,</span> <span class="n">update_layout</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">entities</span>
+
+    <span class="k">def</span> <span class="nf">build_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">path_patterns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Constructs a target filename for a file or dictionary of entities.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            source (str, File, dict): The source data to use to construct the</span>
+<span class="sd">                new file path. Must be one of:</span>
+<span class="sd">                - A File object</span>
+<span class="sd">                - A string giving the path of a File contained within the</span>
+<span class="sd">                  current Layout.</span>
+<span class="sd">                - A dict of entities, with entity names in keys and values in</span>
+<span class="sd">                  values</span>
+<span class="sd">            path_patterns (list): Optional path patterns to use to construct</span>
+<span class="sd">                the new file path. If None, the Layout-defined patterns will</span>
+<span class="sd">                be used.</span>
+<span class="sd">            strict (bool): If True, all entities must be matched inside a</span>
+<span class="sd">                pattern in order to be a valid match. If False, extra entities</span>
+<span class="sd">                will be ignored so long as all mandatory entities are found.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">entities</span>
+
+        <span class="k">if</span> <span class="n">path_patterns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path_patterns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_patterns</span>
+
+        <span class="k">return</span> <span class="n">build_path</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">path_patterns</span><span class="p">,</span> <span class="n">strict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">copy_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_patterns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symbolic_links</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">conflicts</span><span class="o">=</span><span class="s1">&#39;fail&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">get_selectors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copies one or more Files to new locations defined by each File&#39;s</span>
+<span class="sd">        entities and the specified path_patterns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            files (list): Optional list of File objects to write out. If none</span>
+<span class="sd">                provided, use files from running a get() query using remaining</span>
+<span class="sd">                **kwargs.</span>
+<span class="sd">            path_patterns (str, list): Write patterns to pass to each file&#39;s</span>
+<span class="sd">                write_file method.</span>
+<span class="sd">            symbolic_links (bool): Whether to copy each file as a symbolic link</span>
+<span class="sd">                or a deep copy.</span>
+<span class="sd">            root (str): Optional root directory that all patterns are relative</span>
+<span class="sd">                to. Defaults to current working directory.</span>
+<span class="sd">            conflicts (str): One of &#39;fail&#39;, &#39;skip&#39;, &#39;overwrite&#39;, or &#39;append&#39;</span>
+<span class="sd">                that defines the desired action when a output path already</span>
+<span class="sd">                exists. &#39;fail&#39; raises an exception; &#39;skip&#39; does nothing;</span>
+<span class="sd">                &#39;overwrite&#39; overwrites the existing file; &#39;append&#39; adds a</span>
+<span class="sd">                suffix</span>
+<span class="sd">                to each file copy, starting with 0. Default is &#39;fail&#39;.</span>
+<span class="sd">            **get_selectors (kwargs): Optional key word arguments to pass into</span>
+<span class="sd">                a get() query.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;objects&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">get_selectors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">files</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">_files</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_files</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">path_patterns</span><span class="p">,</span> <span class="n">symbolic_link</span><span class="o">=</span><span class="n">symbolic_links</span><span class="p">,</span>
+                   <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">conflicts</span><span class="o">=</span><span class="n">conflicts</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">write_contents_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">path_patterns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">contents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">link_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">content_mode</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">conflicts</span><span class="o">=</span><span class="s1">&#39;fail&#39;</span><span class="p">,</span>
+                               <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                               <span class="n">index_domains</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write arbitrary data to a file defined by the passed entities and</span>
+<span class="sd">        path patterns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entities (dict): A dictionary of entities, with Entity names in</span>
+<span class="sd">                keys and values for the desired file in values.</span>
+<span class="sd">            path_patterns (list): Optional path patterns to use when building</span>
+<span class="sd">                the filename. If None, the Layout-defined patterns will be</span>
+<span class="sd">                used.</span>
+<span class="sd">            contents (object): Contents to write to the generate file path.</span>
+<span class="sd">                Can be any object serializable as text or binary data (as</span>
+<span class="sd">                defined in the content_mode argument).</span>
+<span class="sd">            conflicts (str): One of &#39;fail&#39;, &#39;skip&#39;, &#39;overwrite&#39;, or &#39;append&#39;</span>
+<span class="sd">            that defines the desired action when the output path already</span>
+<span class="sd">            exists. &#39;fail&#39; raises an exception; &#39;skip&#39; does nothing;</span>
+<span class="sd">            &#39;overwrite&#39; overwrites the existing file; &#39;append&#39; adds a suffix</span>
+<span class="sd">            to each file copy, starting with 1. Default is &#39;fail&#39;.</span>
+<span class="sd">            strict (bool): If True, all entities must be matched inside a</span>
+<span class="sd">                pattern in order to be a valid match. If False, extra entities</span>
+<span class="sd">                will be ignored so long as all mandatory entities are found.</span>
+<span class="sd">            domains (list): List of Domains to scan for path_patterns. Order</span>
+<span class="sd">                determines precedence (i.e., earlier Domains will be scanned</span>
+<span class="sd">                first). If None, all available domains are included.</span>
+<span class="sd">            index (bool): If True, adds the generated file to the current</span>
+<span class="sd">                index using the domains specified in index_domains.</span>
+<span class="sd">            index_domains (list): List of domain names to attach the generated</span>
+<span class="sd">                file to when indexing. Ignored if index == False.  If None,</span>
+<span class="sd">                All available domains are used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path_patterns</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">build_path</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="n">path_patterns</span><span class="p">,</span> <span class="n">strict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">path_patterns</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">domains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+                <span class="n">path_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">dom</span><span class="p">]</span><span class="o">.</span><span class="n">path_patterns</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">path_patterns</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">build_path</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="n">pp</span><span class="p">,</span> <span class="n">strict</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot construct any valid filename for &quot;</span>
+                             <span class="s2">&quot;the passed entities given available path &quot;</span>
+                             <span class="s2">&quot;patterns.&quot;</span><span class="p">)</span>
+
+        <span class="n">write_contents_to_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contents</span><span class="o">=</span><span class="n">contents</span><span class="p">,</span> <span class="n">link_to</span><span class="o">=</span><span class="n">link_to</span><span class="p">,</span>
+                               <span class="n">content_mode</span><span class="o">=</span><span class="n">content_mode</span><span class="p">,</span> <span class="n">conflicts</span><span class="o">=</span><span class="n">conflicts</span><span class="p">,</span>
+                               <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index_domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">index_domains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_index_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">index_domains</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">merge_layouts</span><span class="p">(</span><span class="n">layouts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Utility function for merging multiple layouts.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        layouts (list): A list of BIDSLayout instances to merge.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A BIDSLayout containing merged files and entities.</span>
+<span class="sd">    Notes:</span>
+<span class="sd">        Layouts will be merged in the order of the elements in the list. I.e.,</span>
+<span class="sd">        the first Layout will be updated with all values in the 2nd Layout,</span>
+<span class="sd">        then the result will be updated with values from the 3rd Layout, etc.</span>
+<span class="sd">        This means that order matters: in the event of entity or filename</span>
+<span class="sd">        conflicts, later layouts will take precedence.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">layouts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">layouts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">domains</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">domains</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">l</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">layout</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+                <span class="n">layout</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">layout</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">layout</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 - 2018, Developers of pybids.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.1+87.g835a4c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
