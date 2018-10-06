@@ -1,0 +1,15 @@
+:mod:`bids.layout`.BIDSValidator
+=======================================
+
+.. currentmodule:: bids.layout
+
+.. autoclass:: BIDSValidator
+
+   
+   
+
+.. include:: bids.layout.BIDSValidator.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

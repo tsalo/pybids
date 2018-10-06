@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bids.layout.layout &mdash; bids 0.6.5+85.gb4f69d1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="bids 0.6.5+85.gb4f69d1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> bids
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User guide: table of contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../whats_new.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">bids</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>bids.layout.layout</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for bids.layout.layout</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
+<span class="kn">from</span> <span class="nn">.validation</span> <span class="k">import</span> <span class="n">BIDSValidator</span>
+<span class="kn">from</span> <span class="nn">grabbit</span> <span class="k">import</span> <span class="n">Layout</span><span class="p">,</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">grabbit.external</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">grabbit.utils</span> <span class="k">import</span> <span class="n">listify</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">commonpath</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">commonpath</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prefix</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BIDSLayout&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">BIDSFile</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Represents a single BIDS file. &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BIDSFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the associated image file (if it exists) as a NiBabel object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return all associated metadata. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BIDSLayout"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout">[docs]</a><span class="k">class</span> <span class="nc">BIDSLayout</span><span class="p">(</span><span class="n">Layout</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Layout class representing an entire BIDS dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (str): The root directory of the BIDS dataset.</span>
+<span class="sd">        validate (bool): If True, all files are checked for BIDS compliance</span>
+<span class="sd">            when first indexed, and non-compliant files are ignored. This</span>
+<span class="sd">            provides a convenient way to restrict file indexing to only those</span>
+<span class="sd">            files defined in the &quot;core&quot; BIDS spec, as setting validate=True</span>
+<span class="sd">            will lead files in supplementary folders like derivatives/, code/,</span>
+<span class="sd">            etc. to be ignored.</span>
+<span class="sd">        index_associated (bool): Argument passed onto the BIDSValidator;</span>
+<span class="sd">            ignored if validate = False.</span>
+<span class="sd">        include (str, list): String or list of strings specifying which of the</span>
+<span class="sd">            directories that are by default excluded from indexing should be</span>
+<span class="sd">            included. The default exclusion list is [&#39;code&#39;, &#39;stimuli&#39;,</span>
+<span class="sd">            &#39;sourcedata&#39;, &#39;models&#39;].</span>
+<span class="sd">        absolute_paths (bool): If True, queries always return absolute paths.</span>
+<span class="sd">            If False, queries return relative paths, unless the root argument</span>
+<span class="sd">            was left empty (in which case the root defaults to the file system</span>
+<span class="sd">            root).</span>
+<span class="sd">        derivatives (bool, str, list): Specification of whether/how to index</span>
+<span class="sd">            derivatives directories. Can be one of the following types:</span>
+<span class="sd">            * None or False: No derivatives are indexed.</span>
+<span class="sd">            * True: If a derivatives/ directory exists below the root, it will</span>
+<span class="sd">                be indexed.</span>
+<span class="sd">            * string or iterable of strings: One or more directories to be</span>
+<span class="sd">                treated as derivatives and indexed. Note that if derivatives</span>
+<span class="sd">                are specified this way, a derivatives/ directory under {root}</span>
+<span class="sd">                must be explicitly included if it is to be indexed.</span>
+<span class="sd">        kwargs: Optional keyword arguments to pass onto the Layout initializer</span>
+<span class="sd">            in grabbit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index_associated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">absolute_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">derivatives</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validator</span> <span class="o">=</span> <span class="n">BIDSValidator</span><span class="p">(</span><span class="n">index_associated</span><span class="o">=</span><span class="n">index_associated</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="n">validate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_index</span> <span class="o">=</span> <span class="n">MetadataIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Determine which configs to load</span>
+        <span class="n">conf_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span>
+                                 <span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.json&#39;</span><span class="p">)</span>
+        <span class="n">bids_conf</span> <span class="o">=</span> <span class="n">conf_path</span> <span class="o">%</span> <span class="s1">&#39;bids&#39;</span>
+        <span class="n">deriv_conf</span> <span class="o">=</span> <span class="p">[</span><span class="n">bids_conf</span><span class="p">,</span> <span class="n">conf_path</span> <span class="o">%</span> <span class="s1">&#39;derivatives&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Validate arguments</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;root argument must be a string specifying the&quot;</span>
+                             <span class="s2">&quot; directory containing the BIDS dataset.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;BIDS root does not exist: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">root</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;dataset_description.json&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;dataset_description.json&#39; file is missing from &quot;</span>
+                          <span class="s2">&quot;project root. Every valid BIDS dataset must have &quot;</span>
+                          <span class="s2">&quot;this file.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;BIDSVersion&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mandatory &#39;</span><span class="si">%s</span><span class="s2">&#39; field missing from &quot;</span>
+                                     <span class="s2">&quot;dataset_description.json.&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># Construct paths to pass to grabbit</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[(</span><span class="n">root</span><span class="p">,</span> <span class="n">bids_conf</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="n">derivatives</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">derivatives</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">derivatives</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;derivatives&#39;</span><span class="p">)</span>
+            <span class="n">derivatives</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">der</span><span class="p">))</span>
+                           <span class="k">for</span> <span class="n">der</span> <span class="ow">in</span> <span class="n">listify</span><span class="p">(</span><span class="n">derivatives</span><span class="p">)]</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">derivatives</span><span class="p">,</span> <span class="n">deriv_conf</span><span class="p">))</span>
+
+        <span class="c1"># We&#39;ll need this for file validation later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivatives</span> <span class="o">=</span> <span class="n">derivatives</span>
+
+        <span class="c1"># Determine which subdirectories to exclude from indexing</span>
+        <span class="n">excludes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;stimuli&quot;</span><span class="p">,</span> <span class="s2">&quot;sourcedata&quot;</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">derivatives</span><span class="p">:</span>
+            <span class="n">excludes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;derivatives&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">excludes</span> <span class="o">-=</span> <span class="nb">set</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">include</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_dirs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">excludes</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BIDSLayout</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+                                         <span class="n">dynamic_getters</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">absolute_paths</span><span class="o">=</span><span class="n">absolute_paths</span><span class="p">,</span>
+                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BIDSLayout.to_df"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.to_df">[docs]</a>    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return information for all Files tracked in the Layout as a pandas</span>
+<span class="sd">        DataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs: Optional keyword arguments passed on to get(). This allows</span>
+<span class="sd">                one to easily select only a subset of files for export.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas DataFrame, where each row is a file, and each column is</span>
+<span class="sd">                a tracked entity. NaNs are injected whenever a file has no</span>
+<span class="sd">                value for a given attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_data_frame</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n_sessions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">session</span> <span class="k">for</span> <span class="n">isub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subjects</span><span class="p">()</span>
+                          <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sessions</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">isub</span><span class="p">)])</span>
+        <span class="n">n_runs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">run</span> <span class="k">for</span> <span class="n">isub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subjects</span><span class="p">()</span>
+                      <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_runs</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">isub</span><span class="p">)])</span>
+        <span class="n">n_subjects</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subjects</span><span class="p">())</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">[</span><span class="o">-</span><span class="mi">30</span><span class="p">:]</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;BIDS Layout: ...</span><span class="si">{}</span><span class="s2"> | Subjects: </span><span class="si">{}</span><span class="s2"> | Sessions: </span><span class="si">{}</span><span class="s2"> | &quot;</span>
+             <span class="s2">&quot;Runs: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">n_subjects</span><span class="p">,</span> <span class="n">n_sessions</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">def</span> <span class="nf">_validate_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="c1"># Callback from grabbit. Exclude special directories like derivatives/</span>
+        <span class="c1"># and code/ from indexing unless they were explicitly included at</span>
+        <span class="c1"># initialization in either the include or paths arguments.</span>
+        <span class="n">no_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">no_root</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_dirs</span><span class="p">:</span>
+            <span class="n">check_paths</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_paths_to_index</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">}</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">check_paths</span><span class="p">]):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_validate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="c1"># Callback from grabbit. Files are excluded from indexing if validation</span>
+        <span class="c1"># is enabled and fails (i.e., file is not a valid BIDS file).</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">):</span>
+            <span class="n">to_check</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="c1"># For validation purposes, we need to treat all derivatives outside</span>
+        <span class="c1"># the project root as if they were inside it</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivatives</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">der</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivatives</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">der</span><span class="p">):</span>
+                    <span class="n">to_check</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">der</span><span class="p">,</span> <span class="s1">&#39;derivatives&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">to_check</span> <span class="o">=</span> <span class="n">f</span>
+
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+        <span class="k">if</span> <span class="n">to_check</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">sep</span><span class="p">)]</span> <span class="o">!=</span> <span class="n">sep</span><span class="p">:</span>
+            <span class="n">to_check</span> <span class="o">=</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">to_check</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span><span class="o">.</span><span class="n">is_bids</span><span class="p">(</span><span class="n">to_check</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_nearest_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">extension</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Helper function for grabbit get_nearest &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">suffix</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;suffix&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">path</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;File &#39;</span><span class="si">%s</span><span class="s2">&#39; does not have a valid suffix, most &quot;</span>
+                    <span class="s2">&quot;likely because it is not a valid BIDS file.&quot;</span> <span class="o">%</span> <span class="n">path</span>
+                <span class="p">)</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">path</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="s1">&#39;suffix&#39;</span><span class="p">]</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nearest</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span> <span class="n">all_</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">ignore_strict_entities</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;suffix&#39;</span><span class="p">],</span>
+                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tmp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="BIDSLayout.get"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">regex_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">defined_fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve files and/or metadata from the current Layout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            return_type (str): Type of result to return. Valid values:</span>
+<span class="sd">                &#39;tuple&#39;: returns a list of namedtuples containing file name as</span>
+<span class="sd">                    well as attribute/value pairs for all named entities.</span>
+<span class="sd">                &#39;file&#39;: returns a list of matching filenames.</span>
+<span class="sd">                &#39;dir&#39;: returns a list of directories.</span>
+<span class="sd">                &#39;id&#39;: returns a list of unique IDs. Must be used together with</span>
+<span class="sd">                    a valid target.</span>
+<span class="sd">                &#39;obj&#39;: returns a list of matching File objects.</span>
+<span class="sd">            target (str): The name of the target entity to get results for</span>
+<span class="sd">                (if return_type is &#39;dir&#39; or &#39;id&#39;).</span>
+<span class="sd">            extensions (str, list): One or more file extensions to filter on.</span>
+<span class="sd">                Files with any other extensions will be excluded.</span>
+<span class="sd">            domains (list): Optional list of domain names to scan for files.</span>
+<span class="sd">                If None, all available domains are scanned.</span>
+<span class="sd">            regex_search (bool or None): Whether to require exact matching</span>
+<span class="sd">                (False) or regex search (True) when comparing the query string</span>
+<span class="sd">                to each entity. If None (default), uses the value found in</span>
+<span class="sd">                self.</span>
+<span class="sd">            defined_fields (list): Optional list of names of metadata fields</span>
+<span class="sd">                that must be defined in JSON sidecars in order to consider the</span>
+<span class="sd">                file a match, but which don&#39;t need to match any particular</span>
+<span class="sd">                value.</span>
+<span class="sd">            kwargs (dict): Any optional key/values to filter the entities on.</span>
+<span class="sd">                Keys are entity names, values are regexes to filter on. For</span>
+<span class="sd">                example, passing filter={ &#39;subject&#39;: &#39;sub-[12]&#39;} would return</span>
+<span class="sd">                only files that match the first two subjects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A named tuple (default) or a list (see return_type for details).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Separate entity kwargs from metadata kwargs</span>
+        <span class="n">ent_kwargs</span><span class="p">,</span> <span class="n">md_kwargs</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+
+        <span class="n">all_ents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_domain_entities</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">all_ents</span><span class="p">:</span>
+                <span class="n">ent_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">md_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="c1"># Get entity-based search results using the superclass&#39;s get()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span>
+            <span class="n">BIDSLayout</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">return_type</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">domains</span><span class="p">,</span>
+                                  <span class="n">regex_search</span><span class="p">,</span> <span class="o">**</span><span class="n">ent_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">if</span> <span class="n">return_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">md_kwargs</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">defined_fields</span><span class="p">,</span>
+                                                <span class="o">**</span><span class="n">md_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="BIDSLayout.get_metadata"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">include_entities</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return metadata found in JSON sidecars for the specified file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): Path to the file to get metadata for.</span>
+<span class="sd">            include_entities (bool): If True, all available entities extracted</span>
+<span class="sd">                from the filename (rather than JSON sidecars) are included in</span>
+<span class="sd">                the returned metadata dictionary.</span>
+<span class="sd">            kwargs (dict): Optional keyword arguments to pass onto</span>
+<span class="sd">                get_nearest().</span>
+
+<span class="sd">        Returns: A dictionary of key/value pairs extracted from all of the</span>
+<span class="sd">            target file&#39;s associated JSON sidecars.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            A dictionary containing metadata extracted from all matching .json</span>
+<span class="sd">            files is returned. In cases where the same key is found in multiple</span>
+<span class="sd">            files, the values in files closer to the input filename will take</span>
+<span class="sd">            precedence, per the inheritance rules in the BIDS specification.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># For querying efficiency, store metadata in the MetadataIndex cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_index</span><span class="o">.</span><span class="n">index_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">include_entities</span><span class="p">:</span>
+            <span class="n">entities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span><span class="o">.</span><span class="n">entities</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">entities</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_index</span><span class="o">.</span><span class="n">file_index</span><span class="p">[</span><span class="n">path</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="BIDSLayout.get_bvec"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get_bvec">[docs]</a>    <span class="k">def</span> <span class="nf">get_bvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get bvec file for passed path.&quot;&quot;&quot;</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nearest_helper</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;bvec&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;dwi&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tmp</span></div>
+
+<div class="viewcode-block" id="BIDSLayout.get_bval"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get_bval">[docs]</a>    <span class="k">def</span> <span class="nf">get_bval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get bval file for passed path.&quot;&quot;&quot;</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nearest_helper</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;bval&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;dwi&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tmp</span></div>
+
+<div class="viewcode-block" id="BIDSLayout.get_fieldmap"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get_fieldmap">[docs]</a>    <span class="k">def</span> <span class="nf">get_fieldmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">return_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get fieldmap(s) for specified path.&quot;&quot;&quot;</span>
+        <span class="n">fieldmaps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fieldmaps</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fieldmaps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fieldmaps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">fieldmaps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">fieldmaps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;More than one fieldmap found, but the &quot;</span>
+                                 <span class="s2">&quot;&#39;return_list&#39; argument was set to False. &quot;</span>
+                                 <span class="s2">&quot;Either ensure that there is only one &quot;</span>
+                                 <span class="s2">&quot;fieldmap for this image, or set the &quot;</span>
+                                 <span class="s2">&quot;&#39;return_list&#39; argument to True and handle &quot;</span>
+                                 <span class="s2">&quot;the result as a list.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># len(fieldmaps) == 0</span>
+                <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_fieldmaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;sub-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">fieldmap_set</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;(phase1|phasediff|epi|fieldmap)&#39;</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+                         <span class="n">extensions</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">,</span> <span class="s1">&#39;nii&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">metadata</span> <span class="ow">and</span> <span class="s2">&quot;IntendedFor&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">intended_for</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;IntendedFor&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">_suff</span><span class="p">)</span> <span class="k">for</span> <span class="n">_suff</span> <span class="ow">in</span> <span class="n">intended_for</span><span class="p">]):</span>
+                    <span class="n">cur_fieldmap</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;phasediff&quot;</span><span class="p">:</span>
+                        <span class="n">cur_fieldmap</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;phasediff&quot;</span><span class="p">:</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+                                        <span class="s2">&quot;magnitude1&quot;</span><span class="p">:</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                                            <span class="s2">&quot;phasediff&quot;</span><span class="p">,</span> <span class="s2">&quot;magnitude1&quot;</span><span class="p">),</span>
+                                        <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;phasediff&quot;</span><span class="p">}</span>
+                        <span class="n">magnitude2</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s2">&quot;phasediff&quot;</span><span class="p">,</span> <span class="s2">&quot;magnitude2&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">magnitude2</span><span class="p">):</span>
+                            <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s1">&#39;magnitude2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">magnitude2</span>
+                    <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;phase1&quot;</span><span class="p">:</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;phase1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;magnitude1&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                            <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;phase1&quot;</span><span class="p">,</span> <span class="s2">&quot;magnitude1&quot;</span><span class="p">)</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;phase2&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                            <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;phase1&quot;</span><span class="p">,</span> <span class="s2">&quot;phase2&quot;</span><span class="p">)</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;magnitude2&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                            <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;phase1&quot;</span><span class="p">,</span> <span class="s2">&quot;magnitude2&quot;</span><span class="p">)</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span>
+                    <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;epi&quot;</span><span class="p">:</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;epi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;epi&quot;</span>
+                    <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;fieldmap&quot;</span><span class="p">:</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;fieldmap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;magnitude&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                            <span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;fieldmap&quot;</span><span class="p">,</span> <span class="s2">&quot;magnitude&quot;</span><span class="p">)</span>
+                        <span class="n">cur_fieldmap</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;fieldmap&quot;</span>
+                    <span class="n">fieldmap_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_fieldmap</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fieldmap_set</span>
+
+<div class="viewcode-block" id="BIDSLayout.get_collections"><a class="viewcode-back" href="../../../generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get_collections">[docs]</a>    <span class="k">def</span> <span class="nf">get_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">sampling_rate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return one or more variable Collections in the BIDS project.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            level (str): The level of analysis to return variables for. Must be</span>
+<span class="sd">                one of &#39;run&#39;, &#39;session&#39;, &#39;subject&#39;, or &#39;dataset&#39;.</span>
+<span class="sd">            types (str, list): Types of variables to retrieve. All valid values</span>
+<span class="sd">            reflect the filename stipulated in the BIDS spec for each kind of</span>
+<span class="sd">            variable. Valid values include: &#39;events&#39;, &#39;physio&#39;, &#39;stim&#39;,</span>
+<span class="sd">            &#39;scans&#39;, &#39;participants&#39;, &#39;sessions&#39;, and &#39;confounds&#39;.</span>
+<span class="sd">            variables (list): Optional list of variables names to return. If</span>
+<span class="sd">                None, all available variables are returned.</span>
+<span class="sd">            merge (bool): If True, variables are merged across all observations</span>
+<span class="sd">                of the current level. E.g., if level=&#39;subject&#39;, variables from</span>
+<span class="sd">                all subjects will be merged into a single collection. If False,</span>
+<span class="sd">                each observation is handled separately, and the result is</span>
+<span class="sd">                returned as a list.</span>
+<span class="sd">            sampling_rate (int, str): If level=&#39;run&#39;, the sampling rate to</span>
+<span class="sd">                pass onto the returned BIDSRunVariableCollection.</span>
+<span class="sd">            skip_empty (bool): Whether or not to skip empty Variables (i.e.,</span>
+<span class="sd">                where there are no rows/records in a file after applying any</span>
+<span class="sd">                filtering operations like dropping NaNs).</span>
+<span class="sd">            kwargs: Optional additional arguments to pass onto load_variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">bids.variables</span> <span class="k">import</span> <span class="n">load_variables</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">load_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+                               <span class="n">skip_empty</span><span class="o">=</span><span class="n">skip_empty</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">index</span><span class="o">.</span><span class="n">get_collections</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">merge</span><span class="p">,</span>
+                                     <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_file_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="c1"># Override grabbit&#39;s File with a BIDSFile.</span>
+        <span class="k">return</span> <span class="n">BIDSFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">MetadataIndex</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A simple dict-based index for key/value pairs in JSON metadata.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        layout (BIDSLayout): The BIDSLayout instance to index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_index</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_index</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index metadata for the specified file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            f (BIDSFile, str): A BIDSFile or path to an indexed file.</span>
+<span class="sd">            overwrite (bool): If True, forces reindexing of the file even if</span>
+<span class="sd">                an entry already exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_index</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">md</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">md_key</span><span class="p">,</span> <span class="n">md_val</span> <span class="ow">in</span> <span class="n">md</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">md_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_index</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">key_index</span><span class="p">[</span><span class="n">md_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key_index</span><span class="p">[</span><span class="n">md_key</span><span class="p">][</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">md_val</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_index</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="p">][</span><span class="n">md_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">md_val</span>
+
+    <span class="k">def</span> <span class="nf">_get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">potential_jsons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">_get_nearest_helper</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;.json&#39;</span><span class="p">,</span>
+                                                          <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">potential_jsons</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">json_file_path</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">potential_jsons</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">json_file_path</span><span class="p">):</span>
+                <span class="n">param_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">json_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+                                            <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">defined_fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search files in the layout by metadata fields.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            files (list): Optional list of names of files to search. If None,</span>
+<span class="sd">                all files in the layout are scanned.</span>
+<span class="sd">            defined_fields (list): Optional list of names of fields that must</span>
+<span class="sd">                be defined in the JSON sidecar in order to consider the file a</span>
+<span class="sd">                match, but which don&#39;t need to match any particular value.</span>
+<span class="sd">            kwargs: Optional keyword arguments defining search constraints;</span>
+<span class="sd">                keys are names of metadata fields, and values are the values</span>
+<span class="sd">                to match those fields against (e.g., SliceTiming=0.017) would</span>
+<span class="sd">                return all files that have a SliceTiming value of 0.071 in</span>
+<span class="sd">                metadata.</span>
+
+<span class="sd">        Returns: A list of filenames that match all constraints.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">defined_fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">defined_fields</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">defined_fields</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_keys</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one field to search on must be passed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If no list of files is passed, use all files in layout</span>
+        <span class="k">if</span> <span class="n">files</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Index metadata for any previously unseen files</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Get file intersection of all kwargs keys--this is fast</span>
+        <span class="n">filesets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">[]))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">]</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">&amp;</span> <span class="n">y</span><span class="p">,</span> <span class="n">filesets</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">&amp;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">def</span> <span class="nf">check_matches</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;^</span><span class="si">%s</span><span class="s1">$&#39;</span> <span class="o">%</span> <span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s2">&quot;.*&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_index</span><span class="p">[</span><span class="n">f</span><span class="p">][</span><span class="n">key</span><span class="p">]),</span> <span class="n">val</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_index</span><span class="p">[</span><span class="n">f</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># Serially check matches against each pattern, with early termination</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">check_matches</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span><span class="p">),</span> <span class="n">matches</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">matches</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 - 2018, Developers of pybids.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.5+85.gb4f69d1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

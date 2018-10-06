@@ -1,0 +1,15 @@
+:mod:`bids.layout`.BIDSLayout
+====================================
+
+.. currentmodule:: bids.layout
+
+.. autoclass:: BIDSLayout
+
+   
+   
+
+.. include:: bids.layout.BIDSLayout.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>
