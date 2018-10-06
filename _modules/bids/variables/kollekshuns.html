@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>bids.variables.kollekshuns &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  <title>bids.variables.kollekshuns &mdash; bids 0.6.5+84.gce41dd0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../../../index.html"/>
+    <link rel="top" title="bids 0.6.5+84.gce41dd0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -270,9 +270,11 @@
             <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
 
         <span class="n">ind_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;amplitude&#39;</span><span class="p">})</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">&#39;n/a&#39;</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ind_cols</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span>
                             <span class="n">values</span><span class="o">=</span><span class="s1">&#39;amplitude&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;n/a&#39;</span><span class="p">,</span> <span class="n">fillna</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
@@ -562,7 +564,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.1+87.g835a4c2',
+            VERSION:'0.6.5+84.gce41dd0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

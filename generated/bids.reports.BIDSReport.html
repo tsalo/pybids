@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>bids.reports.BIDSReport &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  <title>bids.reports.BIDSReport &mdash; bids 0.6.5+84.gce41dd0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../index.html"/>
+    <link rel="top" title="bids 0.6.5+84.gce41dd0 documentation" href="../index.html"/>
         <link rel="up" title="API Reference" href="../api.html"/> 
 
   
@@ -90,7 +90,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide: table of contents</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.grabbids"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>: Querying BIDS datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#bids-grabbids-querying-bids-datasets"><code class="docutils literal"><span class="pre">bids.grabbids</span></code>: Querying BIDS datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#module-bids.analysis"><code class="docutils literal"><span class="pre">bids.analysis</span></code>: Model specification for BIDS datasets</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#module-bids.reports"><code class="docutils literal"><span class="pre">bids.reports</span></code>: Data acquisition report generation</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">bids.reports</span></code>.BIDSReport</a><ul class="simple">
@@ -181,7 +181,7 @@ dataset.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>layout</strong> (<a class="reference internal" href="bids.grabbids.BIDSLayout.html#bids.grabbids.BIDSLayout" title="bids.grabbids.BIDSLayout"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code></a>) – Layout object for a BIDS dataset.</li>
+<li><strong>layout</strong> (<code class="xref py py-obj docutils literal"><span class="pre">bids.layout.BIDSLayout</span></code>) – Layout object for a BIDS dataset.</li>
 <li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#str" title="(in Python v3.5)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code></a>, optional) – <p>Configuration info for methods generation. Can be a path to a file
 (str), a dictionary, or None. If None, loads and uses default
 configuration information.
@@ -189,7 +189,8 @@ Keys in the dictionary include:</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>’dir’:      a dictionary for converting encoding direction strings</dt>
-<dd>(e.g., j-) to descriptions (e.g., anterior to posterior)</dd>
+<dd>(e.g., j-) to descriptions (e.g., anterior to
+posterior)</dd>
 <dt>’seq’:      a dictionary of sequence abbreviations (e.g., EP) and</dt>
 <dd>corresponding names (e.g., echo planar)</dd>
 <dt>’seqvar’:   a dictionary of sequence variant abbreviations</dt>
@@ -234,7 +235,7 @@ along with the number of times each pattern occurred.</td>
 </table>
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.grabbids</span> <span class="k">import</span> <span class="n">BIDSLayout</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.layout</span> <span class="k">import</span> <span class="n">BIDSLayout</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.reports</span> <span class="k">import</span> <span class="n">BIDSReport</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.tests</span> <span class="k">import</span> <span class="n">get_test_data_path</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">layout</span> <span class="o">=</span> <span class="n">BIDSLayout</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">get_test_data_path</span><span class="p">(),</span> <span class="s1">&#39;synthetic&#39;</span><span class="p">))</span>
@@ -284,7 +285,7 @@ along with the number of times each pattern occurred.</td>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.1+87.g835a4c2',
+            VERSION:'0.6.5+84.gce41dd0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

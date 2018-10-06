@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>bids.analysis.analysis &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  <title>bids.analysis.analysis &mdash; bids 0.6.5+84.gce41dd0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../../../index.html"/>
+    <link rel="top" title="bids 0.6.5+84.gce41dd0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -156,7 +156,7 @@
             
   <h1>Source code for bids.analysis.analysis</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">bids.grabbids</span> <span class="k">import</span> <span class="n">BIDSLayout</span>
+<span class="kn">from</span> <span class="nn">bids.layout</span> <span class="k">import</span> <span class="n">BIDSLayout</span>
 <span class="kn">from</span> <span class="nn">bids.utils</span> <span class="k">import</span> <span class="n">matches_entities</span>
 <span class="kn">from</span> <span class="nn">bids.variables</span> <span class="k">import</span> <span class="n">BIDSVariableCollection</span><span class="p">,</span> <span class="n">merge_collections</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">transformations</span> <span class="k">as</span> <span class="n">transform</span>
@@ -208,8 +208,7 @@
             <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="n">block_args</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Analysis.setup"><a class="viewcode-back" href="../../../generated/bids.analysis.Analysis.html#bids.analysis.Analysis.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg_func</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">identity_contrasts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-              <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Analysis.setup"><a class="viewcode-back" href="../../../generated/bids.analysis.Analysis.html#bids.analysis.Analysis.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg_func</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Set up the sequence of blocks for analysis.</span>
 
 <span class="sd">        Args:</span>
@@ -226,8 +225,6 @@
 <span class="sd">                name of a function recognized by apply() in pandas, or a</span>
 <span class="sd">                Callable that takes a DataFrame as input and returns a Series</span>
 <span class="sd">                or a DataFrame. NOTE: CURRENTLY UNIMPLEMENTED.</span>
-<span class="sd">            identity_contrasts (bool): If True, a contrast is automatically</span>
-<span class="sd">                created for each column in the design matrix.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="c1"># In the beginning, there was nothing</span>
@@ -243,7 +240,7 @@
             <span class="k">if</span> <span class="n">blocks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">blocks</span> <span class="ow">and</span> <span class="n">b</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">b</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">input_nodes</span><span class="p">,</span> <span class="n">identity_contrasts</span><span class="p">,</span> <span class="o">**</span><span class="n">selectors</span><span class="p">)</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">input_nodes</span><span class="p">,</span> <span class="o">**</span><span class="n">selectors</span><span class="p">)</span>
             <span class="n">input_nodes</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">output_nodes</span></div></div>
 
 
@@ -265,10 +262,16 @@
 <span class="sd">            generated when the model is fit.</span>
 <span class="sd">        input_nodes (list): Optional list of AnalysisNodes to use as input to</span>
 <span class="sd">            this Block (typically, the output from the preceding Block).</span>
+<span class="sd">        auto_contrasts (list, bool): Optional list of variable names to create</span>
+<span class="sd">            an indicator contrast for. Alternatively, if the boolean value True</span>
+<span class="sd">            is passed, a contrast is automatically generated for _all_</span>
+<span class="sd">            available variables. This parameter is over-written by the setting</span>
+<span class="sd">            in setup() if the latter is passed.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contrasts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contrasts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">auto_contrasts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
@@ -278,6 +281,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contrasts</span> <span class="o">=</span> <span class="n">contrasts</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_nodes</span> <span class="o">=</span> <span class="n">input_nodes</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_contrasts</span> <span class="o">=</span> <span class="n">auto_contrasts</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_nodes</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">_filter_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
@@ -307,23 +311,21 @@
     <span class="k">def</span> <span class="nf">_concatenate_input_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">entities</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-            <span class="n">contrasts</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">contrasts</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contrasts</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">contrasts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">contrasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">n</span><span class="o">.</span><span class="n">contrasts</span><span class="p">]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contrasts</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">contrasts</span><span class="p">)</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
             <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">entities</span><span class="p">))</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">entities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="n">BIDSVariableCollection</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">identity_contrasts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Set up the Block and construct the design matrix.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            input_nodes (list): Optional list of Node objects produced by</span>
 <span class="sd">                the preceding Block in the analysis. If None, uses any inputs</span>
 <span class="sd">                passed in at Block initialization.</span>
-<span class="sd">            identity_contrasts (bool): If True, a contrast is automatically</span>
-<span class="sd">                created for each column in the design matrix.</span>
 <span class="sd">            kwargs: Optional keyword arguments to pass onto load_variables.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_nodes</span> <span class="o">=</span> <span class="p">[]</span>
@@ -341,6 +343,14 @@
         <span class="n">objects</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
 
+        <span class="c1"># Set up and validate variable lists</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;variables&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">hrf_variables</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HRF_variables&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hrf_variables</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;HRF_variables must be a subset &quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;of variables in BIDS model.&quot;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
             <span class="c1"># Split into separate lists of Collections and Nodes</span>
             <span class="n">input_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">grp</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">AnalysisNode</span><span class="p">)]</span>
@@ -350,22 +360,14 @@
                 <span class="n">node_coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concatenate_input_nodes</span><span class="p">(</span><span class="n">input_nodes</span><span class="p">)</span>
                 <span class="n">colls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_coll</span><span class="p">)</span>
 
-            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">or</span> <span class="p">{}</span>
-
-            <span class="n">variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;variables&#39;</span><span class="p">,</span> <span class="p">[]))</span>
-            <span class="n">hrf_variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HRF_variables&#39;</span><span class="p">,</span> <span class="p">[]))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">variables</span> <span class="o">&gt;=</span> <span class="n">hrf_variables</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;HRF_variables must be a subset &quot;</span><span class="p">,</span>
-                                 <span class="s2">&quot;of variables in BIDS model.&quot;</span><span class="p">)</span>
-
             <span class="n">coll</span> <span class="o">=</span> <span class="n">merge_collections</span><span class="p">(</span><span class="n">colls</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colls</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">colls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="n">coll</span> <span class="o">=</span> <span class="n">apply_transformations</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;variables&#39;</span><span class="p">):</span>
-                <span class="n">transform</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">variables</span><span class="p">:</span>
+                <span class="n">transform</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
 
             <span class="n">node</span> <span class="o">=</span> <span class="n">AnalysisNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="n">coll</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">contrasts</span><span class="p">,</span> <span class="n">input_nodes</span><span class="p">,</span>
-                                <span class="n">identity_contrasts</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">auto_contrasts</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">output_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 
@@ -406,32 +408,37 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">get_design_matrix</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">get_contrasts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_contrasts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Return contrast information for the current block.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            names (list): Optional list of names of contrasts to return. If</span>
 <span class="sd">                None (default), all contrasts are returned.</span>
+<span class="sd">            variables (bool): Optional list of strings giving the names of</span>
+<span class="sd">                design matrix columns to use when generating the matrix of</span>
+<span class="sd">                weights.</span>
 <span class="sd">            kwargs: Optional keyword arguments used to constrain which of the</span>
 <span class="sd">                available nodes get returned (e.g., passing subject=[&#39;01&#39;,</span>
 <span class="sd">                &#39;02&#39;] will return contrast  information only for subjects &#39;01&#39;</span>
 <span class="sd">                and &#39;02&#39;).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A list of ContrastMatrixInfo namedtuples--one per unit of the</span>
-<span class="sd">            current analysis level (e.g., if level=&#39;run&#39;, each element in the</span>
-<span class="sd">            list represents the design matrix for a single run).</span>
+<span class="sd">            A list with one element per unit of the current analysis level</span>
+<span class="sd">            (e.g., if level=&#39;run&#39;, each element in the list representing the</span>
+<span class="sd">            contrast information for a single run). Each element is a list of</span>
+<span class="sd">            ContrastInfo namedtuples (one per contrast).</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">nodes</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_objects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_nodes</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">get_contrasts</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">get_contrasts</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
 
 
 <span class="n">DesignMatrixInfo</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;DesignMatrixInfo&#39;</span><span class="p">,</span>
                               <span class="p">(</span><span class="s1">&#39;sparse&#39;</span><span class="p">,</span> <span class="s1">&#39;dense&#39;</span><span class="p">,</span> <span class="s1">&#39;entities&#39;</span><span class="p">))</span>
 
 
-<span class="n">ContrastMatrixInfo</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;ContrastMatrixInfo&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span>
-                                                       <span class="s1">&#39;entities&#39;</span><span class="p">))</span>
+<span class="n">ContrastInfo</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;ContrastInfo&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;entities&#39;</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">AnalysisNode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -443,17 +450,21 @@
 <span class="sd">        collection (BIDSVariableCollection): The BIDSVariableCollection</span>
 <span class="sd">            containing variables at this Node.</span>
 <span class="sd">        contrasts (list): A list of contrasts defined in the originating Block.</span>
-<span class="sd">        identity_contrasts (bool): If True, a contrast is automatically</span>
-<span class="sd">            created for each column in the design matrix.</span>
+<span class="sd">        auto_contrasts (list): Optional list of variable names to create</span>
+<span class="sd">            an indicator contrast for. Alternatively, if the boolean value True</span>
+<span class="sd">            is passed, a contrast is automatically generated for _all_</span>
+<span class="sd">            available variables.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">collection</span><span class="p">,</span> <span class="n">contrasts</span><span class="p">,</span> <span class="n">input_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">identity_contrasts</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">auto_contrasts</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">collection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_block_contrasts</span> <span class="o">=</span> <span class="n">contrasts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_nodes</span> <span class="o">=</span> <span class="n">input_nodes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">identity_contrasts</span> <span class="o">=</span> <span class="n">identity_contrasts</span>
+        <span class="k">if</span> <span class="n">auto_contrasts</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">auto_contrasts</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_contrasts</span> <span class="o">=</span> <span class="n">auto_contrasts</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contrasts</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -520,17 +531,24 @@
 
         <span class="k">return</span> <span class="n">DesignMatrixInfo</span><span class="p">(</span><span class="n">sparse_df</span><span class="p">,</span> <span class="n">dense_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_contrasts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_contrasts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Return contrast information for the current block.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            names (list): Optional list of names of contrasts to return. If</span>
 <span class="sd">                None (default), all contrasts are returned.</span>
-<span class="sd">            entities (bool): If True, concatenates entity columns to the</span>
-<span class="sd">                returned contrast matrix.</span>
+<span class="sd">            variables (bool): Optional list of strings giving the names of</span>
+<span class="sd">                design matrix columns to use when generating the matrix of</span>
+<span class="sd">                weights.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            The &#39;variables&#39; argument take precedence over the natural process</span>
+<span class="sd">            of column selection. I.e.,</span>
+<span class="sd">                if a variable shows up in a contrast, but isn&#39;t named in</span>
+<span class="sd">                variables, it will *not* be included in the returned</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A ContrastMatrixInfo namedtuple.</span>
+<span class="sd">            A list of ContrastInfo namedtuples, one per contrast.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="c1"># Verify that there are no invalid columns in the condition_lists</span>
@@ -544,60 +562,41 @@
         <span class="c1"># Construct a list of all contrasts, including identity contrasts</span>
         <span class="n">contrasts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block_contrasts</span><span class="p">)</span>
 
-        <span class="c1">### Add ability to set different types of identity contrasts</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">identity_contrasts</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">contrasts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">col_name</span><span class="p">,</span>
-                    <span class="s1">&#39;condition_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">col_name</span><span class="p">],</span>
-                    <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                <span class="p">})</span>
+        <span class="c1"># Check that all contrasts have unique name</span>
+        <span class="n">contrast_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contrasts</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">contrast_names</span><span class="p">))</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">contrast_names</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One or more contrasts have the same name&quot;</span><span class="p">)</span>
+        <span class="n">contrast_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">contrast_names</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_contrasts</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_contrasts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">col_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                    <span class="ow">and</span> <span class="n">col_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contrast_names</span><span class="p">):</span>
+                    <span class="n">contrasts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">col_name</span><span class="p">,</span>
+                        <span class="s1">&#39;condition_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">col_name</span><span class="p">],</span>
+                        <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span>
+                    <span class="p">})</span>
+
         <span class="c1"># Filter on desired contrast names if passed</span>
         <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">contrasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contrasts</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
 
-        <span class="c1"># Build a &quot;maximal&quot; contrast matrix that has all possible rows and</span>
-        <span class="c1"># columns. Then we&#39;ll proceed by knocking out invalid/missing rows and</span>
-        <span class="c1"># columns separately for each input node.</span>
-        <span class="n">contrast_defs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;condition_list&#39;</span><span class="p">])</span>
-                         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contrasts</span><span class="p">]</span>
-        <span class="n">con_mat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">contrast_defs</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">con_mat</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contrasts</span><span class="p">]</span>
+        <span class="k">def</span> <span class="nf">setup_contrast</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">])</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;condition_list&#39;</span><span class="p">])</span>
+            <span class="c1"># If variables were explicitly passed, use them as the columns</span>
+            <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">var_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">weights</span><span class="p">,</span> <span class="n">var_df</span><span class="p">])[</span><span class="n">variables</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1"># Identify all variable names in the current collection that don&#39;t show</span>
-        <span class="c1"># up in any of the input nodes. This will include any variables read in</span>
-        <span class="c1"># at the current level--e.g., if we&#39;re at session level, it might</span>
-        <span class="c1"># include run-by-run ratings of mood, etc.</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">node_cols</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">contrasts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_nodes</span><span class="p">]</span>
-        <span class="n">all_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">node_cols</span><span class="p">))</span>
-        <span class="n">common_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">all_cols</span>
+            <span class="n">test_type</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;T&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;F&#39;</span><span class="p">))</span>
 
-        <span class="c1"># Also track entities for each row in each input node&#39;s contrast matrix</span>
-        <span class="n">ent_index</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">ContrastInfo</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="p">,</span> <span class="n">test_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
 
-        <span class="c1"># Loop over input nodes. For each one, get all available columns, and</span>
-        <span class="c1"># use that to trim down the cloned maximal contrast matrix.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_nodes</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_nodes</span><span class="p">:</span>
-                <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">contrasts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">|</span> <span class="n">common_vars</span><span class="p">)</span>
-                <span class="n">node_mat</span> <span class="o">=</span> <span class="n">con_mat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="n">valid</span> <span class="o">=</span> <span class="n">node_mat</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
-                <span class="n">node_mat</span> <span class="o">=</span> <span class="n">node_mat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span> <span class="p">:]</span>
-                <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_mat</span><span class="p">)</span>
-                <span class="n">ent_index</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">node</span><span class="o">.</span><span class="n">entities</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_mat</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># If there are no input nodes, we&#39;re at run level, so just use</span>
-            <span class="c1"># the maximal contrast matrix.</span>
-            <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">con_mat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contrasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">setup_contrast</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contrasts</span><span class="p">]</span>
 
-        <span class="n">contrasts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="c1"># Drop rows that are all zeros</span>
-        <span class="n">contrasts</span> <span class="o">=</span> <span class="n">contrasts</span><span class="p">[(</span><span class="n">contrasts</span><span class="o">.</span><span class="n">T</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ent_index</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contrasts</span> <span class="o">=</span> <span class="n">ContrastMatrixInfo</span><span class="p">(</span><span class="n">contrasts</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contrasts</span>
 
     <span class="k">def</span> <span class="nf">matches_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -673,7 +672,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.1+87.g835a4c2',
+            VERSION:'0.6.5+84.gce41dd0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

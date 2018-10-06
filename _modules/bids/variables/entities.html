@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>bids.variables.entities &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  <title>bids.variables.entities &mdash; bids 0.6.5+84.gce41dd0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../../../index.html"/>
+    <link rel="top" title="bids 0.6.5+84.gce41dd0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -167,7 +167,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        id (int, str): A value uniquely identifying this node. Typically the</span>
-<span class="sd">            entity value extracted from the filename via grabbids.</span>
+<span class="sd">            entity value extracted from the filename via layout.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="Node.__init__"><a class="viewcode-back" href="../../../generated/bids.variables.entities.Node.html#bids.variables.entities.Node.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">entities</span><span class="p">):</span>
@@ -233,7 +233,7 @@
 <span class="sd">                &#39;collection&#39;, variablesfrom all subjects will be merged into a</span>
 <span class="sd">                single collection. If False, each observation is handled</span>
 <span class="sd">                separately, and the result is returned as a list.</span>
-<span class="sd">            sampling_rate (int, str): If level=&#39;run&#39;, the sampling rate to</span>
+<span class="sd">            sampling_rate (int, str): If unit=&#39;run&#39;, the sampling rate to</span>
 <span class="sd">                pass onto the returned BIDSRunVariableCollection.</span>
 <span class="sd">            entities: Optional constraints used to limit what gets returned.</span>
 
@@ -270,7 +270,7 @@
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">results</span> <span class="k">else</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -389,7 +389,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.1+87.g835a4c2',
+            VERSION:'0.6.5+84.gce41dd0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>4. reports: Data acquisition report generation &mdash; bids 0.5.1+87.g835a4c2 documentation</title>
+  <title>4. reports: Data acquisition report generation &mdash; bids 0.6.5+84.gce41dd0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="bids 0.5.1+87.g835a4c2 documentation" href="../index.html"/>
+    <link rel="top" title="bids 0.6.5+84.gce41dd0 documentation" href="../index.html"/>
         <link rel="up" title="User guide: table of contents" href="../user_guide.html"/>
         <link rel="next" title="API Reference" href="../api.html"/>
         <link rel="prev" title="3. analysis: Model specification for BIDS datasets" href="../analysis/index.html"/> 
@@ -185,7 +185,7 @@
 </div>
 <div class="section" id="initializing-reports">
 <span id="id1"></span><h2><a class="toc-backref" href="#id3">4.1. Initializing reports</a><a class="headerlink" href="#initializing-reports" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../generated/bids.reports.BIDSReport.html#bids.reports.BIDSReport" title="bids.reports.BIDSReport"><code class="xref py py-obj docutils literal"><span class="pre">bids.reports.BIDSReport</span></code></a> class requires a <a class="reference internal" href="../generated/bids.grabbids.BIDSLayout.html#bids.grabbids.BIDSLayout" title="bids.grabbids.BIDSLayout"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code></a> object as an argument:</p>
+<p>The <a class="reference internal" href="../generated/bids.reports.BIDSReport.html#bids.reports.BIDSReport" title="bids.reports.BIDSReport"><code class="xref py py-obj docutils literal"><span class="pre">bids.reports.BIDSReport</span></code></a> class requires a <code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code> object as an argument:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.grabbids</span> <span class="k">import</span> <span class="n">BIDSLayout</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bids.reports</span> <span class="k">import</span> <span class="n">BIDSReport</span>
@@ -205,22 +205,22 @@
 <span class="go">r&quot;&quot;&quot;</span>
 <span class="go">For session 01:</span>
 <span class="go">    MR data were acquired using a UNKNOWN-Tesla MANUFACTURER MODEL MRI scanner.</span>
-<span class="go">    Ten runs of N-Back fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
+<span class="go">    Ten runs of N-Back UNKNOWN-echo fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
 <span class="go">echo time, TE=UNKNOWNms; flip angle, FA=UNKNOWN&lt;deg&gt;; field of view, FOV=128x128mm;</span>
 <span class="go">matrix size=64x64; voxel size=2x2x2mm). Each run was 2:40 minutes in length, during</span>
 <span class="go">which 64 functional volumes were acquired.</span>
-<span class="go">    Five runs of Rest fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
+<span class="go">    Five runs of Rest UNKNOWN-echo fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
 <span class="go">echo time, TE=UNKNOWNms; flip angle, FA=UNKNOWN&lt;deg&gt;; field of view, FOV=128x128mm;</span>
 <span class="go">matrix size=64x64; voxel size=2x2x2mm). Each run was 2:40 minutes in length, during</span>
 <span class="go">which 64 functional volumes were acquired.</span>
 
 <span class="go">For session 02:</span>
 <span class="go">    MR data were acquired using a UNKNOWN-Tesla MANUFACTURER MODEL MRI scanner.</span>
-<span class="go">    Ten runs of N-Back fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
+<span class="go">    Ten runs of N-Back UNKNOWN-echo fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
 <span class="go">echo time, TE=UNKNOWNms; flip angle, FA=UNKNOWN&lt;deg&gt;; field of view, FOV=128x128mm;</span>
 <span class="go">matrix size=64x64; voxel size=2x2x2mm). Each run was 2:40 minutes in length, during</span>
 <span class="go">which 64 functional volumes were acquired.</span>
-<span class="go">    Five runs of Rest fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
+<span class="go">    Five runs of Rest UNKNOWN-echo fMRI data were collected (64 slices; repetition time, TR=2500ms;</span>
 <span class="go">echo time, TE=UNKNOWNms; flip angle, FA=UNKNOWN&lt;deg&gt;; field of view, FOV=128x128mm;</span>
 <span class="go">matrix size=64x64; voxel size=2x2x2mm). Each run was 2:40 minutes in length, during</span>
 <span class="go">which 64 functional volumes were acquired.</span>
@@ -232,7 +232,7 @@
 <div class="section" id="generating-reports-on-subsets-of-the-data">
 <span id="generating-subreports"></span><h3>4.2.1. Generating reports on subsets of the data<a class="headerlink" href="#generating-reports-on-subsets-of-the-data" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">generate</span></code> method allows for keyword restrictions, just like
-<a class="reference internal" href="../generated/bids.grabbids.BIDSLayout.html#bids.grabbids.BIDSLayout" title="bids.grabbids.BIDSLayout"><code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code></a>’s <code class="docutils literal"><span class="pre">get</span></code> method. For example, to
+<code class="xref py py-obj docutils literal"><span class="pre">bids.grabbids.BIDSLayout</span></code>’s <code class="docutils literal"><span class="pre">get</span></code> method. For example, to
 generate a report only for <code class="docutils literal"><span class="pre">nback</span></code> task data in session <code class="docutils literal"><span class="pre">01</span></code>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s1">&#39;nback&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">main_report</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -297,7 +297,7 @@ generate a report only for <code class="docutils literal"><span class="pre">nbac
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.1+87.g835a4c2',
+            VERSION:'0.6.5+84.gce41dd0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
